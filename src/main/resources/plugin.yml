@@ -1,0 +1,24 @@
+name: MLGRush
+version: ${project.version}
+main: eu.toqix.mlgrush.MLGRush
+api-version: 1.13
+authors: [toqix]
+description: A nice mlgrush plugin
+
+commands:
+  resetblocks:
+    description: resets the world
+  si:
+    description: saves the current Inventory
+  build:
+    description: sets Player in Build Mode
+  startgame:
+    description: starts the game
+  leave:
+    description: leaves the game
+  god:
+    description: nur für jesen
+  pluginreload:
+    description: reloads the mlgrush plugin
+  name:
+    description: cool name
