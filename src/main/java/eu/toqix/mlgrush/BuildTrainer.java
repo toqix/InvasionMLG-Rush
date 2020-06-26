@@ -16,15 +16,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public final class BuildTrainer implements Listener {
-    public List<Player> playersInBuild = new ArrayList<>();
-    public List<Player> playersInWeb = new ArrayList<>();
-    public List<Player> playersInJump = new ArrayList<>();
+    public List<Player> playersInBuild;
+    public List<Player> playersInMLG;
+    public List<Player> playersInJump;
 
     private HashMap<Player, Integer> blocksPlaced = new HashMap<>();
     private HashMap<Player, Integer> timeBridged = new HashMap<>();
@@ -54,7 +51,7 @@ public final class BuildTrainer implements Listener {
             } else if (x < -4 && x > -5 && z > 167.5 && z < 169.5 && y > 105 && y < 107) {
                 joinJumpAndRun(player);
             } else if (x < -26 && x > -28 && z > 178 && z < 180 && y > 103 && y < 105) {
-                runMlg(player, 169);
+                runMlg(player, 169, new ItemStack(Material.COBWEB), "Laufen");
             }
 
         }
@@ -185,35 +182,51 @@ public final class BuildTrainer implements Listener {
         player.getInventory().setItem(8, StackCreator.createStack(Material.RED_DYE, "&cLeave", Arrays.asList("&7Leaves the Game"), "", false));
     }
 
-    public void runMlg(Player player, int height) {
-        if (!playersInWeb.contains(player)) {
+    public void runMlg(Player player, int height, ItemStack item, String art) {
+        if (!playersInMLG.contains(player)) {
             player.getWorld().getBlockAt(new Location(player.getWorld(), -32, height, 179)).setType(Material.DIAMOND_BLOCK);
             Bukkit.getScheduler().runTaskLater(MLGRush.getInstance(), () -> {
                 player.teleport(new Location(player.getWorld(), -31.5, height + 1, 179.5));
-                player.getInventory().setItem(4, new ItemStack(Material.COBWEB));
+                player.getInventory().setItem(4, item);
                 player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
-                playersInWeb.add(player);
+                playersInMLG.add(player);
             }, 20);
             Bukkit.getScheduler().runTaskLater(MLGRush.getInstance(), () -> {
-                if (playersInWeb.contains(player)) {
+                if (playersInMLG.contains(player)) {
 
                     mlgFailed(player);
                 }
             }, 200);
             Bukkit.getScheduler().runTaskLater(MLGRush.getInstance(), () -> player.getWorld().getBlockAt(new Location(player.getWorld(), -32, height, 179)).setType(Material.AIR), 100);
-            String art = "Laufen";
             player.sendTitle(MessageCreator.translate("&6Cobweb MLG"), MessageCreator.translate("&7" + art), 0, 50, 0);
 
 
         }
     }
+    public void startMLG(Player player, String mode) {
+        Random random = new Random();
+        switch (mode) {
+            case "web":
+                player.sendMessage(MessageCreator.translate("&7[&bTrainer&7] You are going to perform a &6Cobweb MLG"));
+                break;
+            case "sweb":
+                player.sendMessage(MessageCreator.translate("&7[&bTrainer&7] You are going to perform a &6Cobweb MLG &7 without heights"));
+                break;
+            case "leiter":
+                player.sendMessage(MessageCreator.translate("&7[&bTrainer&7] You are going to perform a &6Leiter MLG"));
+                runMlg(player, random.nextInt(20) + 20, new ItemStack(Material.LADDER, 5), "Leiter");
+                break;
+            case "sleiter":
+                player.sendMessage(MessageCreator.translate("&7[&bTrainer&7] &4 Not done Yet"));
+        }
+    }
 
     public void mlgFailed(Player player) {
-        if (playersInWeb.contains(player)) {
-            player.sendTitle(MessageCreator.translate("&cMission Failed"), MessageCreator.translate("&7We'll get on next Time"), 0, 50, 0);
+        if (playersInMLG.contains(player)) {
+            player.sendTitle(MessageCreator.translate("&cMission Failed"), MessageCreator.translate("&7We'll get it next Time"), 0, 50, 0);
             player.getInventory().clear();
             player.teleport(MLGRush.spawn);
-            playersInWeb.remove(player);
+            playersInMLG.remove(player);
         }
     }
 
@@ -296,8 +309,8 @@ public final class BuildTrainer implements Listener {
 
                     }
                 }
-                if (playersInWeb.size() > 0) {
-                    for (Player player : playersInWeb) {
+                if (playersInMLG.size() > 0) {
+                    for (Player player : playersInMLG) {
                         double py = player.getLocation().getY();
 
                         if (timeWeb.containsKey(player)) {

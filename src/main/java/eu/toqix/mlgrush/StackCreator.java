@@ -167,6 +167,9 @@ public class StackCreator implements Listener {
                 MLGRush.getGameManager().Maps.get(Integer.parseInt(args)).put("finished", false);
                 MLGRush.getBuildManager().editMap(Integer.parseInt(args), player);
             }
+        }else if(command == 't') {
+            InvOpener.closeDelay(player);
+            MLGRush.getTrainer().startMLG(player, args);
         }
     }
 
