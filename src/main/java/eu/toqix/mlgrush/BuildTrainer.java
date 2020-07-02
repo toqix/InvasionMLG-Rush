@@ -1,17 +1,22 @@
 package eu.toqix.mlgrush;
 
+import eu.toqix.mlgrush.Utils.InvOpener;
+import eu.toqix.mlgrush.Utils.Inventories;
 import eu.toqix.mlgrush.Utils.MessageCreator;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -19,15 +24,16 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.*;
 
 public final class BuildTrainer implements Listener {
-    public List<Player> playersInBuild;
-    public List<Player> playersInMLG;
-    public List<Player> playersInJump;
+    public List<Player> playersInBuild = new ArrayList();
+    public List<Player> playersInMLG = new ArrayList();
+    public List<Player> playersInJump = new ArrayList();
 
     private HashMap<Player, Integer> blocksPlaced = new HashMap<>();
     private HashMap<Player, Integer> timeBridged = new HashMap<>();
     private HashMap<Player, Integer> jumpFails = new HashMap<>();
     private HashMap<Player, Integer> timeJumped = new HashMap<>();
     private HashMap<Player, Integer> timeWeb = new HashMap<>();
+    private HashMap<Player, Integer> timeMlg = new HashMap<>();
 
 
     private Location start = new Location(Bukkit.getWorld("world"), -15.5, 104, 189.5);
@@ -51,9 +57,35 @@ public final class BuildTrainer implements Listener {
             } else if (x < -4 && x > -5 && z > 167.5 && z < 169.5 && y > 105 && y < 107) {
                 joinJumpAndRun(player);
             } else if (x < -26 && x > -28 && z > 178 && z < 180 && y > 103 && y < 105) {
-                runMlg(player, 169, new ItemStack(Material.COBWEB), "Laufen");
+               joinMlg(player);
             }
 
+        }
+    }
+    public void joinMlg(Player player) {
+        if (!playersInMLG.contains(player)) {
+
+            if (!MLGRush.getBuildManager().playerBuilding.containsKey(player)) {
+                if (MLGRush.getGameManager().queue.containsKey(player)) {
+                    if (MLGRush.getGameManager().queue.get(player) == 1) {
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&bTrainer&7] Sorry you can't join the Jump and Run shortly before game or in game"));
+                    } else {
+                        if (playersInBuild.contains(player)) {
+                            player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&bTrainer&7] Sorry you can't join the MLG-Trainer whilst in another Trainer"));
+                        } else {
+                            player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&bTrainer&7] You joined the MLG-Trainer by toqix"));
+                            InvOpener.openDelay(player, Inventories.mlgTrainer());
+                        }
+                    }
+                } else {
+                    if (playersInBuild.contains(player)) {
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&bTrainer&7] Sorry you can't join the MLG-Trainer whilst in another Trainer"));
+                    } else {
+                        InvOpener.openDelay(player, Inventories.mlgTrainer());
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&bTrainer&7] You joined the Jump And Run by Dia_block_mcg use &e/leave&7 to leave"));
+                    }
+                }
+            }
         }
     }
 
@@ -184,37 +216,32 @@ public final class BuildTrainer implements Listener {
 
     public void runMlg(Player player, int height, ItemStack item, String art) {
         if (!playersInMLG.contains(player)) {
-            player.getWorld().getBlockAt(new Location(player.getWorld(), -32, height, 179)).setType(Material.DIAMOND_BLOCK);
-            Bukkit.getScheduler().runTaskLater(MLGRush.getInstance(), () -> {
-                player.teleport(new Location(player.getWorld(), -31.5, height + 1, 179.5));
-                player.getInventory().setItem(4, item);
-                player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
-                playersInMLG.add(player);
-            }, 20);
-            Bukkit.getScheduler().runTaskLater(MLGRush.getInstance(), () -> {
-                if (playersInMLG.contains(player)) {
+            player.getWorld().getBlockAt(new Location(player.getWorld(), -93, height, 182)).setType(Material.DIAMOND_BLOCK);
 
-                    mlgFailed(player);
-                }
-            }, 200);
-            Bukkit.getScheduler().runTaskLater(MLGRush.getInstance(), () -> player.getWorld().getBlockAt(new Location(player.getWorld(), -32, height, 179)).setType(Material.AIR), 100);
+            player.teleport(new Location(player.getWorld(), -92.5, height + 1, 182.5));
+            player.getInventory().setItem(4, item);
+            player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
+            playersInMLG.add(player);
+            Bukkit.getScheduler().runTaskLater(MLGRush.getInstance(), () -> player.getWorld().getBlockAt(new Location(player.getWorld(), -93, height, 182)).setType(Material.AIR), 100);
             player.sendTitle(MessageCreator.translate("&6Cobweb MLG"), MessageCreator.translate("&7" + art), 0, 50, 0);
 
 
         }
     }
+
     public void startMLG(Player player, String mode) {
         Random random = new Random();
         switch (mode) {
             case "web":
                 player.sendMessage(MessageCreator.translate("&7[&bTrainer&7] You are going to perform a &6Cobweb MLG"));
+                runMlg(player, random.nextInt(45) + 135, new ItemStack(Material.COBWEB, 1), "CobWeb");
                 break;
             case "sweb":
-                player.sendMessage(MessageCreator.translate("&7[&bTrainer&7] You are going to perform a &6Cobweb MLG &7 without heights"));
+                player.sendMessage(MessageCreator.translate("&7[&bTrainer&7] &4 Not done Yet"));
                 break;
             case "leiter":
                 player.sendMessage(MessageCreator.translate("&7[&bTrainer&7] You are going to perform a &6Leiter MLG"));
-                runMlg(player, random.nextInt(20) + 20, new ItemStack(Material.LADDER, 5), "Leiter");
+                runMlg(player, random.nextInt(20) + 120, new ItemStack(Material.LADDER, 5), "Leiter");
                 break;
             case "sleiter":
                 player.sendMessage(MessageCreator.translate("&7[&bTrainer&7] &4 Not done Yet"));
@@ -223,10 +250,20 @@ public final class BuildTrainer implements Listener {
 
     public void mlgFailed(Player player) {
         if (playersInMLG.contains(player)) {
-            player.sendTitle(MessageCreator.translate("&cMission Failed"), MessageCreator.translate("&7We'll get it next Time"), 0, 50, 0);
+            player.sendTitle(MessageCreator.translate("&cMLG Failed"), MessageCreator.translate("&7Du bist ein schlechter Minequafter"), 0, 50, 0);
             player.getInventory().clear();
             player.teleport(MLGRush.spawn);
             playersInMLG.remove(player);
+        }
+    }
+
+    public void mlgWon(Player player) {
+        if(playersInMLG.contains(player)) {
+            player.getInventory().clear();
+            player.teleport(MLGRush.spawn);
+            playersInMLG.remove(player);
+            player.sendTitle(MessageCreator.translate("&6You Won"), MessageCreator.translate("&7Du bist ein guter Minequafter"), 0 , 50, 0);
+
         }
     }
 
@@ -278,7 +315,7 @@ public final class BuildTrainer implements Listener {
 
                     for (Player player : playersInJump) {
                         if (player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR) {
-                           // leaveJumpAndRun(player);
+                            // leaveJumpAndRun(player);
                             player.kickPlayer(MessageCreator.kickCreator("&4Nein Du drecks Cheater", "&7Schämst du dich nicht dass du im Jump and Run in den Gamemode gehst?", true));
 
                         }
@@ -289,9 +326,9 @@ public final class BuildTrainer implements Listener {
                         } else {
                             timeJumped.put(player, 1);
                         }
-                        int hours = 0;
-                        int mins = 0;
-                        int secs = 0;
+                        int hours;
+                        int mins;
+                        int secs;
 
                         secs = timeJumped.get(player) / 2;
                         mins = secs / 60;
@@ -320,8 +357,17 @@ public final class BuildTrainer implements Listener {
                         }
                         if (player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR) {
                             // player.kickPlayer(MessageCreator.kickCreator("&4Nein Du drecks Cheater", "&7Schämst du dich nicht dass du im Jump and Run in den Gamemode gehst?", true));
+                            player.setGameMode(GameMode.SURVIVAL);
                         }
-                        if (py < 109) {
+                        if (py < 120) {
+                            timeMlg.put(player, 1);
+                        }else {
+                            timeMlg.put(player, 0);
+                        }
+                        if(timeMlg.get(player) == 1 && player.isOnGround()) {
+                            Bukkit.getScheduler().runTaskLater(MLGRush.getInstance(), () -> mlgWon(player), 20);
+                        }
+                        if (py < 105) {
                             mlgFailed(player);
                         }
 
@@ -391,6 +437,10 @@ public final class BuildTrainer implements Listener {
                     }, 20);
                 }, 20);
             }
+        }else if(playersInMLG.contains(player)) {
+            Bukkit.getScheduler().runTaskLater(MLGRush.getInstance(), ()-> {
+                player.getWorld().getBlockAt(block.getX(), block.getY(), block.getZ()).setType(Material.AIR);
+            }, 20);
         }
     }
 
@@ -408,6 +458,19 @@ public final class BuildTrainer implements Listener {
                     } else if (ChatColor.stripColor(tool.getItemMeta().getDisplayName()).equals("Leave")) {
                         leaveJumpAndRun(player);
                     }
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerDamage(EntityDamageEvent event) {
+        if (event.getEntity().getType() == EntityType.PLAYER) {
+            Player player = (Player) event.getEntity();
+            if (event.getCause() == EntityDamageEvent.DamageCause.FALL) {
+                if (playersInMLG.contains(player)) {
+                    mlgFailed(player);
+                    event.setCancelled(true);
                 }
             }
         }

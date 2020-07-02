@@ -56,16 +56,15 @@ public class BlockListeners implements Listener {
         }
 
         if(!MLGRush.getBuildManager().playerBuilding.containsKey(event.getPlayer()) && !inGame && !MLGRush.getTrainer().playersInBuild.contains(event.getPlayer())) {
-           /* if(MLGRush.getBuildManager().playersEditingLobby.size() > 0) {
-                for(int i = 0; i < MLGRush.getBuildManager().playersEditingLobby.size() -1; i++) {
-                    if(MLGRush.getBuildManager().playersEditingLobby.toArray()[i] == event.getPlayer()) {
-                        event.setCancelled(false);
-                    }
+            if(MLGRush.getTrainer().playersInMLG.contains(event.getPlayer())) {
+                if(event.getBlock().getType() == Material.COBWEB || event.getBlock().getType() == Material.LADDER) {
+
+                }else {
+                    event.setCancelled(true);
                 }
             }else {
                 event.setCancelled(true);
-            }*/
-            event.setCancelled(true);
+            }
         }
        /* Block block = event.getBlock();
 

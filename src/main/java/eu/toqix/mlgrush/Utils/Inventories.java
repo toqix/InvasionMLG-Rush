@@ -147,10 +147,10 @@ public class Inventories {
         for(int i = 0; i<27; i++) {
             inv.setItem(i, StackCreator.getNothing());
         }
-        inv.setItem(10, StackCreator.createStack(Material.COBWEB, "&fCobWeb MLG" , Arrays.asList("&7Mit höhe"), "t(web)", false));
-        inv.setItem(11, StackCreator.createStack(Material.COBWEB, "&fCobweb MLG", Arrays.asList("&7Ohne Höhe"), "t(sweb)", true));
-        inv.setItem(13, StackCreator.createStack(Material.LADDER, "&6Leiter MLG", Arrays.asList("&7Ohne Blöcke") , "t(leiter)" , false));
-        inv.setItem(14, StackCreator.createStack(Material.LADDER, "&6Leiter MLG", Arrays.asList("&7Mit Blöcken") , "t(sleiter)" , true));
+        inv.setItem(11, StackCreator.createStack(Material.COBWEB, "&fCobWeb MLG" , Arrays.asList("&7Mit höhe"), "t(web)", false));
+      //  inv.setItem(11, StackCreator.createStack(Material.COBWEB, "&fCobweb MLG", Arrays.asList("&7Ohne Höhe"), "t(sweb)", true));
+        inv.setItem(15, StackCreator.createStack(Material.LADDER, "&6Leiter MLG", Arrays.asList("&7Ohne Blöcke") , "t(leiter)" , false));
+        //inv.setItem(15, StackCreator.createStack(Material.LADDER, "&6Leiter MLG", Arrays.asList("&7Mit Blöcken") , "t(sleiter)" , true));
         return inv;
     }
 
