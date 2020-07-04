@@ -25,8 +25,12 @@ import java.util.*;
 
 public final class BuildTrainer implements Listener {
     public List<Player> playersInBuild = new ArrayList();
-    public List<Player> playersInMLG = new ArrayList();
+    public HashMap<Player, Boolean> playersInMLG = new HashMap<>();
+    private HashMap<Player, String> mlgMode = new HashMap<>();
+    private HashMap<Player, Integer> mlgWins = new HashMap<>();
+    private HashMap<Player, Integer> mlgFails = new HashMap<>();
     public List<Player> playersInJump = new ArrayList();
+    public List<Player> playersTraining = new ArrayList<>();
 
     private HashMap<Player, Integer> blocksPlaced = new HashMap<>();
     private HashMap<Player, Integer> timeBridged = new HashMap<>();
@@ -57,14 +61,14 @@ public final class BuildTrainer implements Listener {
             } else if (x < -4 && x > -5 && z > 167.5 && z < 169.5 && y > 105 && y < 107) {
                 joinJumpAndRun(player);
             } else if (x < -26 && x > -28 && z > 178 && z < 180 && y > 103 && y < 105) {
-               joinMlg(player);
+                joinMlg(player);
             }
 
         }
     }
-    public void joinMlg(Player player) {
-        if (!playersInMLG.contains(player)) {
 
+    public void joinMlg(Player player) {
+        if (!playersInMLG.containsKey(player)) {
             if (!MLGRush.getBuildManager().playerBuilding.containsKey(player)) {
                 if (MLGRush.getGameManager().queue.containsKey(player)) {
                     if (MLGRush.getGameManager().queue.get(player) == 1) {
@@ -82,7 +86,7 @@ public final class BuildTrainer implements Listener {
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&bTrainer&7] Sorry you can't join the MLG-Trainer whilst in another Trainer"));
                     } else {
                         InvOpener.openDelay(player, Inventories.mlgTrainer());
-                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&bTrainer&7] You joined the Jump And Run by Dia_block_mcg use &e/leave&7 to leave"));
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&bTrainer&7] You joined the MLG-Trainer by toqix"));
                     }
                 }
             }
@@ -103,6 +107,7 @@ public final class BuildTrainer implements Listener {
                             player.teleport(start);
                             if (!playersInJump.contains(player)) {
                                 playersInJump.add(player);
+                                playersTraining.add(player);
                             }
                             player.sendTitle(ChatColor.GOLD + "Jump And Run", "joined", 0, 50, 0);
                             player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&bTrainer&7] You joined the Jump And Run by Dia_block_mcg use &e/leave&7 to leave"));
@@ -117,6 +122,7 @@ public final class BuildTrainer implements Listener {
                     } else {
                         if (!playersInJump.contains(player)) {
                             playersInJump.add(player);
+                            playersTraining.add(player);
                         }
                         player.sendTitle(ChatColor.GOLD + "Jump And Run", "joined", 0, 50, 0);
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&bTrainer&7] You joined the Jump And Run by Dia_block_mcg use &e/leave&7 to leave"));
@@ -140,7 +146,6 @@ public final class BuildTrainer implements Listener {
     }
 
     public void join(Player player) {
-
         if (!MLGRush.getBuildManager().playerBuilding.containsKey(player)) {
             if (MLGRush.getGameManager().queue.containsKey(player)) {
                 if (MLGRush.getGameManager().queue.get(player) == 1) {
@@ -154,6 +159,7 @@ public final class BuildTrainer implements Listener {
                         player.teleport(start);
                         if (!playersInBuild.contains(player)) {
                             playersInBuild.add(player);
+                            playersTraining.add(player);
                         }
                         giveItems(player);
                         player.sendTitle(ChatColor.GOLD + "Training", "joined", 0, 50, 0);
@@ -163,17 +169,15 @@ public final class BuildTrainer implements Listener {
                 if (playersInJump.contains(player)) {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&bTrainer&7] Sorry you can't join the Trainer whilst in the Jump And Run"));
                 } else {
-
-
                     if (!playersInBuild.contains(player)) {
                         playersInBuild.add(player);
+                        playersTraining.add(player);
                     }
                     giveItems(player);
                     player.sendTitle(ChatColor.GOLD + "Training", "joined", 0, 50, 0);
                 }
             }
         }
-
     }
 
     public void win(Player player) {
@@ -197,6 +201,7 @@ public final class BuildTrainer implements Listener {
 
         }
         playersInBuild.remove(player);
+        playersTraining.remove(player);
         blocksPlaced.remove(player);
     }
 
@@ -215,17 +220,17 @@ public final class BuildTrainer implements Listener {
     }
 
     public void runMlg(Player player, int height, ItemStack item, String art) {
-        if (!playersInMLG.contains(player)) {
+        if (playersInMLG.containsKey(player)) {
             player.getWorld().getBlockAt(new Location(player.getWorld(), -93, height, 182)).setType(Material.DIAMOND_BLOCK);
 
             player.teleport(new Location(player.getWorld(), -92.5, height + 1, 182.5));
             player.getInventory().setItem(4, item);
-            player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
-            playersInMLG.add(player);
-            Bukkit.getScheduler().runTaskLater(MLGRush.getInstance(), () -> player.getWorld().getBlockAt(new Location(player.getWorld(), -93, height, 182)).setType(Material.AIR), 100);
-            player.sendTitle(MessageCreator.translate("&6Cobweb MLG"), MessageCreator.translate("&7" + art), 0, 50, 0);
 
 
+            Bukkit.getScheduler().runTaskLater(MLGRush.getInstance(), () -> player.getWorld().getBlockAt(new Location(player.getWorld(), -93, height, 182)).setType(Material.AIR), 50);
+            if (art != "Endless Mode") {
+                player.sendTitle(MessageCreator.translate("&6Cobweb MLG"), MessageCreator.translate("&7" + art), 0, 50, 0);
+            }
         }
     }
 
@@ -234,36 +239,104 @@ public final class BuildTrainer implements Listener {
         switch (mode) {
             case "web":
                 player.sendMessage(MessageCreator.translate("&7[&bTrainer&7] You are going to perform a &6Cobweb MLG"));
+                mlgMode.put(player, "web");
+                playersInMLG.put(player, false);
+                playersTraining.add(player);
                 runMlg(player, random.nextInt(45) + 135, new ItemStack(Material.COBWEB, 1), "CobWeb");
+                player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
                 break;
             case "sweb":
-                player.sendMessage(MessageCreator.translate("&7[&bTrainer&7] &4 Not done Yet"));
+                player.sendMessage(MessageCreator.translate("&7[&bTrainer&7] You joined the Endless Cobweb Mode"));
+                mlgMode.put(player, "web");
+                playersInMLG.put(player, true);
+                playersTraining.add(player);
+                runMlg(player, random.nextInt(45) + 135, new ItemStack(Material.COBWEB, 1), "CobWeb");
+                player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
                 break;
             case "leiter":
                 player.sendMessage(MessageCreator.translate("&7[&bTrainer&7] You are going to perform a &6Leiter MLG"));
+                mlgMode.put(player, "ladder");
+                playersInMLG.put(player, false);
+                playersTraining.add(player);
                 runMlg(player, random.nextInt(20) + 120, new ItemStack(Material.LADDER, 5), "Leiter");
+                player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
                 break;
             case "sleiter":
-                player.sendMessage(MessageCreator.translate("&7[&bTrainer&7] &4 Not done Yet"));
+                mlgMode.put(player, "ladder");
+                playersInMLG.put(player, true);
+                playersTraining.add(player);
+                runMlg(player, random.nextInt(20) + 120, new ItemStack(Material.LADDER, 1), "CobWeb");
+                player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
+                player.sendMessage(MessageCreator.translate("&7[&bTrainer&7] You joined the Endless Leiter Mode"));
         }
     }
 
     public void mlgFailed(Player player) {
-        if (playersInMLG.contains(player)) {
-            player.sendTitle(MessageCreator.translate("&cMLG Failed"), MessageCreator.translate("&7Du bist ein schlechter Minequafter"), 0, 50, 0);
-            player.getInventory().clear();
-            player.teleport(MLGRush.spawn);
-            playersInMLG.remove(player);
+        Random random = new Random();
+        if (playersInMLG.containsKey(player)) {
+            if (!playersInMLG.get(player)) {
+                player.sendTitle(MessageCreator.translate("&cMLG Failed"), MessageCreator.translate("&7Du bist ein schlechter Minequafter"), 0, 50, 0);
+                player.getInventory().clear();
+                player.teleport(MLGRush.spawn);
+                playersInMLG.remove(player);
+                playersTraining.remove(player);
+            } else {
+                player.sendTitle(MessageCreator.translate("&cMLG Failed"), MessageCreator.translate("&7Du bist ein schlechter Minequafter"), 0, 50, 0);
+                player.getInventory().clear();
+                ItemStack item;
+                if (mlgFails.containsKey(player)) {
+                    mlgFails.put(player, mlgFails.get(player) + 1);
+                } else {
+                    mlgFails.put(player, 1);
+                }
+                if (mlgMode.get(player) == "web") {
+                    item = new ItemStack(Material.COBWEB, 1);
+                    runMlg(player, random.nextInt(45) + 135, item, "Endless Mode");
+                } else if (mlgMode.get(player) == "ladder") {
+                    item = new ItemStack(Material.LADDER, 5);
+                    runMlg(player, random.nextInt(20) + 120, item, "Endless Mode");
+                }
+
+            }
         }
     }
 
-    public void mlgWon(Player player) {
-        if(playersInMLG.contains(player)) {
-            player.getInventory().clear();
-            player.teleport(MLGRush.spawn);
-            playersInMLG.remove(player);
-            player.sendTitle(MessageCreator.translate("&6You Won"), MessageCreator.translate("&7Du bist ein guter Minequafter"), 0 , 50, 0);
+    public void leaveMlg(Player player) {
+        player.sendTitle(MessageCreator.translate("&cDu hast Verlassen"), MessageCreator.translate("&7Du bist ein schlechter Minequafter"), 0, 50, 0);
+        player.sendMessage(MessageCreator.translate("&7[&bTrainer&7] You left the &6MLG-Trainer"));
+        player.getInventory().clear();
+        player.teleport(MLGRush.spawn);
+        playersInMLG.remove(player);
+        playersTraining.remove(player);
+    }
 
+    public void mlgWon(Player player) {
+        Random random = new Random();
+        if (playersInMLG.containsKey(player)) {
+            if (!playersInMLG.get(player)) {
+                player.getInventory().clear();
+                player.teleport(MLGRush.spawn);
+                playersInMLG.remove(player);
+                playersTraining.remove(player);
+                player.sendTitle(MessageCreator.translate("&6You Won"), MessageCreator.translate("&7Du bist ein guter Minequafter"), 0, 50, 0);
+            } else {
+                player.sendTitle(MessageCreator.translate("&6MLG Won"), MessageCreator.translate("&7Du bist ein guter Minequafter"), 0, 50, 0);
+                player.getInventory().clear();
+                ItemStack item;
+                if (mlgWins.containsKey(player)) {
+                    mlgWins.put(player, mlgWins.get(player) + 1);
+                } else {
+                    mlgWins.put(player, 1);
+                }
+
+                if (mlgMode.get(player) == "web") {
+                    item = new ItemStack(Material.COBWEB, 1);
+                    runMlg(player, random.nextInt(45) + 135, item, "Endless Mode");
+                } else if (mlgMode.get(player) == "ladder") {
+                    item = new ItemStack(Material.LADDER, 5);
+                    runMlg(player, random.nextInt(20) + 120, item, "Endless Mode");
+                }
+            }
         }
     }
 
@@ -271,110 +344,121 @@ public final class BuildTrainer implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
-                if (playersInBuild.size() > 0) {
-                    for (Player player : playersInBuild) {
-                        if (!player.isOnline()) {
-                            playersInBuild.remove(player);
-                        }
-                        if (player.getLocation().getY() < 100) {
-                            //MLGRush.resetBlocks(70, 60, 160, 400);
-                            player.setFallDistance(0);
-                            player.teleport(start);
-                            giveItems(player);
-                            player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1, 2);
-                            blocksPlaced.put(player, 0);
 
-                        }
-                        if (blocksPlaced.containsKey(player)) {
-                            int blocks = blocksPlaced.get(player);
-                            int time = 0;
-                            if (timeBridged.containsKey(player)) {
-                                time = timeBridged.get(player) / 2;
-                            }
-
-                            TextComponent actionbar = new TextComponent(ChatColor.translateAlternateColorCodes('&', "&6Blocks &7bridged: &a&l" + blocks + " &6Time: &7&l" + time));
-                            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, actionbar);
-                            if (blocks > 0) {
-                                if (timeBridged.containsKey(player)) {
-                                    timeBridged.put(player, timeBridged.get(player) + 1);
-                                } else {
-                                    timeBridged.put(player, 1);
-                                }
-                            } else {
-                                timeBridged.put(player, 0);
-                            }
-                        } else {
-                            TextComponent actionbar = new TextComponent(ChatColor.translateAlternateColorCodes('&', "&6Blocks &7bridget: &a&l00 Sekunden"));
-                            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, actionbar);
-                        }
-
+                for (Player player : playersInBuild) {
+                    if (!player.isOnline()) {
+                        playersInBuild.remove(player);
+                        playersTraining.remove(player);
+                    }
+                    if (player.getLocation().getY() < 100) {
+                        //MLGRush.resetBlocks(70, 60, 160, 400);
+                        player.setFallDistance(0);
+                        player.teleport(start);
+                        giveItems(player);
+                        player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1, 2);
+                        blocksPlaced.put(player, 0);
 
                     }
-                }
-                if (playersInJump.size() > 0) {
-
-                    for (Player player : playersInJump) {
-                        if (player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR) {
-                            // leaveJumpAndRun(player);
-                            player.kickPlayer(MessageCreator.kickCreator("&4Nein Du drecks Cheater", "&7Schämst du dich nicht dass du im Jump and Run in den Gamemode gehst?", true));
-
+                    if (blocksPlaced.containsKey(player)) {
+                        int blocks = blocksPlaced.get(player);
+                        int time = 0;
+                        if (timeBridged.containsKey(player)) {
+                            time = timeBridged.get(player) / 2;
                         }
 
-                        double py = player.getLocation().getY();
-                        if (timeJumped.containsKey(player)) {
-                            timeJumped.put(player, timeJumped.get(player) + 1);
+                        TextComponent actionbar = new TextComponent(ChatColor.translateAlternateColorCodes('&', "&6Blocks &7bridged: &a&l" + blocks + " &6Time: &7&l" + time));
+                        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, actionbar);
+                        if (blocks > 0) {
+                            if (timeBridged.containsKey(player)) {
+                                timeBridged.put(player, timeBridged.get(player) + 1);
+                            } else {
+                                timeBridged.put(player, 1);
+                            }
                         } else {
-                            timeJumped.put(player, 1);
+                            timeBridged.put(player, 0);
                         }
-                        int hours;
-                        int mins;
-                        int secs;
+                    } else {
+                        TextComponent actionbar = new TextComponent(ChatColor.translateAlternateColorCodes('&', "&6Blocks &7bridget: &a&l00 Sekunden"));
+                        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, actionbar);
+                    }
+                }
 
-                        secs = timeJumped.get(player) / 2;
-                        mins = secs / 60;
-                        hours = mins / 60;
-                        secs = secs - (mins * 60) - (hours * 3600);
-                        TextComponent actionbar = new TextComponent(ChatColor.GRAY + "Fails: " + 0 + ChatColor.GRAY + "   Time: " + hours + ":" + mins + ":" + secs);
-                        if (jumpFails.containsKey(player)) {
-                            actionbar = new TextComponent(ChatColor.GRAY + "Fails: " + ChatColor.RED + jumpFails.get(player) + ChatColor.GRAY + "   Time: " + hours + ":" + mins + ":" + secs);
+                for (Player player : playersInJump) {
+                    if (player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR) {
+                        // leaveJumpAndRun(player);
+                        player.kickPlayer(MessageCreator.kickCreator("&4Nein Du drecks Cheater", "&7Schämst du dich nicht dass du im Jump and Run in den Gamemode gehst?", true));
+                    }
+                    if (!player.isOnline()) {
+                        playersInJump.remove(player);
+                        playersTraining.remove(player);
+                    }
+
+                    double py = player.getLocation().getY();
+                    if (timeJumped.containsKey(player)) {
+                        timeJumped.put(player, timeJumped.get(player) + 1);
+                    } else {
+                        timeJumped.put(player, 1);
+                    }
+                    int hours;
+                    int mins;
+                    int secs;
+
+                    secs = timeJumped.get(player) / 2;
+                    mins = secs / 60;
+                    hours = mins / 60;
+                    secs = secs - (mins * 60) - (hours * 3600);
+                    TextComponent actionbar = new TextComponent(ChatColor.GRAY + "Fails: " + 0 + ChatColor.GRAY + "   Time: " + hours + ":" + mins + ":" + secs);
+                    if (jumpFails.containsKey(player)) {
+                        actionbar = new TextComponent(ChatColor.GRAY + "Fails: " + ChatColor.RED + jumpFails.get(player) + ChatColor.GRAY + "   Time: " + hours + ":" + mins + ":" + secs);
+                    }
+                    player.spigot().sendMessage(ChatMessageType.ACTION_BAR, actionbar);
+                    if (py < 106) {
+                        jumpDie(player);
+                    }
+                }
+
+                for (Map.Entry<Player, Boolean> map : playersInMLG.entrySet()) {
+                    Player player = map.getKey();
+                    if (!player.isOnline()) {
+                        playersInMLG.remove(player);
+                        playersTraining.remove(player);
+                    }
+
+                    double py = player.getLocation().getY();
+
+                    if (timeWeb.containsKey(player)) {
+                        timeJumped.put(player, timeWeb.get(player) + 1);
+                    } else {
+                        timeWeb.put(player, 1);
+                    }
+                    if (player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR) {
+                        // player.kickPlayer(MessageCreator.kickCreator("&4Nein Du drecks Cheater", "&7Schämst du dich nicht dass du im Jump and Run in den Gamemode gehst?", true));
+                        player.setGameMode(GameMode.SURVIVAL);
+                    }
+                    if (py < 120) {
+                        timeMlg.put(player, 1);
+                    } else {
+                        timeMlg.put(player, 0);
+                    }
+                    if (timeMlg.get(player) == 1 && player.isOnGround()) {
+                        Bukkit.getScheduler().runTaskLater(MLGRush.getInstance(), () -> mlgWon(player), 0);
+                    }
+                    if (map.getValue()) {
+                        TextComponent actionbar = new TextComponent("");
+                        if (mlgFails.containsKey(player) && mlgWins.containsKey(player)) {
+                            actionbar = new TextComponent(MessageCreator.translate("&7Fails &c" + mlgFails.get(player) + "  &7Wins: &6" + mlgWins.get(player)));
+                        } else if (mlgWins.containsKey(player)) {
+                            actionbar = new TextComponent(MessageCreator.translate("&7Fails &c" + 0 + "  &7Wins: &6" + mlgWins.get(player)));
+                        } else if (mlgFails.containsKey(player)) {
+                            actionbar = new TextComponent(MessageCreator.translate("&7Fails &c" + mlgFails.get(player) + "  &7Wins: &6" +0));
                         }
 
                         player.spigot().sendMessage(ChatMessageType.ACTION_BAR, actionbar);
-                        if (py < 106) {
-                            jumpDie(player);
-                        }
-
                     }
-                }
-                if (playersInMLG.size() > 0) {
-                    for (Player player : playersInMLG) {
-                        double py = player.getLocation().getY();
-
-                        if (timeWeb.containsKey(player)) {
-                            timeJumped.put(player, timeWeb.get(player) + 1);
-                        } else {
-                            timeWeb.put(player, 1);
-                        }
-                        if (player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR) {
-                            // player.kickPlayer(MessageCreator.kickCreator("&4Nein Du drecks Cheater", "&7Schämst du dich nicht dass du im Jump and Run in den Gamemode gehst?", true));
-                            player.setGameMode(GameMode.SURVIVAL);
-                        }
-                        if (py < 120) {
-                            timeMlg.put(player, 1);
-                        }else {
-                            timeMlg.put(player, 0);
-                        }
-                        if(timeMlg.get(player) == 1 && player.isOnGround()) {
-                            Bukkit.getScheduler().runTaskLater(MLGRush.getInstance(), () -> mlgWon(player), 20);
-                        }
-                        if (py < 105) {
-                            mlgFailed(player);
-                        }
-
-                        // player.spigot().sendMessage(ChatMessageType.ACTION_BAR, actionbar);
-
-
+                    if (py < 105) {
+                        mlgFailed(player);
                     }
+                    // player.spigot().sendMessage(ChatMessageType.ACTION_BAR, actionbar);
                 }
             }
         }.runTaskTimer(MLGRush.getInstance(), 0, 10);
@@ -437,8 +521,8 @@ public final class BuildTrainer implements Listener {
                     }, 20);
                 }, 20);
             }
-        }else if(playersInMLG.contains(player)) {
-            Bukkit.getScheduler().runTaskLater(MLGRush.getInstance(), ()-> {
+        } else if (playersInMLG.containsKey(player)) {
+            Bukkit.getScheduler().runTaskLater(MLGRush.getInstance(), () -> {
                 player.getWorld().getBlockAt(block.getX(), block.getY(), block.getZ()).setType(Material.AIR);
             }, 20);
         }
@@ -468,9 +552,11 @@ public final class BuildTrainer implements Listener {
         if (event.getEntity().getType() == EntityType.PLAYER) {
             Player player = (Player) event.getEntity();
             if (event.getCause() == EntityDamageEvent.DamageCause.FALL) {
-                if (playersInMLG.contains(player)) {
-                    mlgFailed(player);
-                    event.setCancelled(true);
+                if (playersInMLG.containsKey(player)) {
+                    if (player.getLocation().getY() < 120) {
+                        mlgFailed(player);
+                        event.setCancelled(true);
+                    }
                 }
             }
         }

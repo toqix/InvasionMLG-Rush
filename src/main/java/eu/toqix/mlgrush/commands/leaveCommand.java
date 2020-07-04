@@ -44,8 +44,14 @@ public class leaveCommand implements CommandExecutor {
 
             }
         }else if (MLGRush.getTrainer().playersInJump.contains(player)){
-
             MLGRush.getTrainer().leaveJumpAndRun(player);
+        }else if(MLGRush.getTrainer().playersInMLG.containsKey(player)) {
+            if(MLGRush.getTrainer().playersInMLG.get(player)) {
+                MLGRush.getTrainer().leaveMlg(player);
+            }else {
+                player.sendMessage(ChatColor.translateAlternateColorCodes('&', "§7[§bMLG-Rush§7] §fDu bist doch nicht im Endless Mode du Witzknochen"));
+            }
+
         }else {
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', "§7[§bMLG-Rush§7] §fDu bist doch nicht in einem Spiel du Witzknochen"));
         }

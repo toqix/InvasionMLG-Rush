@@ -30,7 +30,7 @@ public class PlayerListeners implements Listener {
                     event.setCancelled(true);
                 }
             }
-            if (MLGRush.getBuildManager().playerBuilding.containsKey(player) || MLGRush.getTrainer().playersInJump.contains(player) || MLGRush.getTrainer().playersInBuild.contains(player) || MLGRush.getTrainer().playersInMLG.contains(player)) {
+            if (MLGRush.getBuildManager().playerBuilding.containsKey(player) || MLGRush.getTrainer().playersTraining.contains(player)) {
                 event.setCancelled(true);
             }
 

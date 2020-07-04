@@ -148,9 +148,9 @@ public class Inventories {
             inv.setItem(i, StackCreator.getNothing());
         }
         inv.setItem(11, StackCreator.createStack(Material.COBWEB, "&fCobWeb MLG" , Arrays.asList("&7Mit höhe"), "t(web)", false));
-      //  inv.setItem(11, StackCreator.createStack(Material.COBWEB, "&fCobweb MLG", Arrays.asList("&7Ohne Höhe"), "t(sweb)", true));
+        inv.setItem(12, StackCreator.createStack(Material.COBWEB, "&fCobweb MLG", Arrays.asList("&7Endless"), "t(sweb)", true));
         inv.setItem(15, StackCreator.createStack(Material.LADDER, "&6Leiter MLG", Arrays.asList("&7Ohne Blöcke") , "t(leiter)" , false));
-        //inv.setItem(15, StackCreator.createStack(Material.LADDER, "&6Leiter MLG", Arrays.asList("&7Mit Blöcken") , "t(sleiter)" , true));
+        inv.setItem(14, StackCreator.createStack(Material.LADDER, "&6Leiter MLG", Arrays.asList("&7Endless") , "t(sleiter)" , true));
         return inv;
     }
 

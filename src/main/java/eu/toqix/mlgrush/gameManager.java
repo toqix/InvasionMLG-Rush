@@ -129,6 +129,8 @@ public final class gameManager implements Listener {
                         MLGRush.getTrainer().playersInBuild.remove(player2);
                         MLGRush.getTrainer().playersInJump.remove(player1);
                         MLGRush.getTrainer().playersInJump.remove(player2);
+                        MLGRush.getTrainer().playersInMLG.remove(player1);
+                        MLGRush.getTrainer().playersInMLG.remove(player2);
 
                         int games = 10;
                         if (Maps.get(map).containsKey("rounds")) {
