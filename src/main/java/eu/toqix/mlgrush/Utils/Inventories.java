@@ -1,7 +1,6 @@
 package eu.toqix.mlgrush.Utils;
 
 
-import com.sun.xml.internal.ws.wsdl.writer.document.FaultType;
 import eu.toqix.mlgrush.MLGRush;
 import eu.toqix.mlgrush.StackCreator;
 import org.bukkit.Bukkit;
@@ -12,8 +11,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.IntStream;
 
 public class Inventories {
     public static Inventory mapchooseinv() {
@@ -39,7 +36,7 @@ public class Inventories {
                 }
                 String name = "&9" + maps.get(map).get("name");
                 if (maps.get(map).containsKey("finished")) {
-                    if (!(Boolean) maps.get(map).get("finished")) {
+                    if (!(boolean) maps.get(map).get("finished")) {
                         inv.setItem(slot, StackCreator.createStack(Material.BARRIER, name, Arrays.asList("&cMap not available!", "&7MapID:&3 " + map, author), "", false));
                     } else {
                         if ((boolean) maps.get(map).get("verfügbar")) {
@@ -100,15 +97,15 @@ public class Inventories {
                 }
                 String name = "&9" + maps.get(map).get("name");
                 if (maps.get(map).containsKey("finished")) {
-                    if (!(Boolean) maps.get(map).get("finished") && (Boolean) maps.get(map).get("verfügbar")) {
+                    if (!(boolean) maps.get(map).get("finished") && (boolean) maps.get(map).get("verfügbar")) {
                         inv.setItem(slot, StackCreator.createStack(Material.SANDSTONE, name, Arrays.asList("&7MapID:&3 " + map, "&7Map unfinished or beeing edited", author ), "e(" + map + ")", false));
-                    }else if((Boolean) maps.get(map).get("finished") && (Boolean) maps.get(map).get("verfügbar")) {
+                    }else if((boolean) maps.get(map).get("finished") && (boolean) maps.get(map).get("verfügbar")) {
                         inv.setItem(slot, StackCreator.createStack(Material.SANDSTONE, name, Arrays.asList("&7MapID:&3 " + map, "&7Map unfinished or beeing edited", author), "e(" + map + ")", false));
                     }else {
                         inv.setItem(slot, StackCreator.createStack(Material.BARRIER, name, Arrays.asList("&cMap not available!", "&7MapID:&3 " + map, author), "", false));
                     }
                 } else {
-                    if ((Boolean) maps.get(map).get("verfügbar")) {
+                    if ((boolean) maps.get(map).get("verfügbar")) {
                         inv.setItem(slot, StackCreator.createStack(Material.SANDSTONE, name, Arrays.asList("&7MapID:&3 " + map, author), "e(" + map + ")", false));
                     } else {
                         inv.setItem(slot, StackCreator.createStack(Material.BARRIER, name, Arrays.asList("&cMap not available!", "&7MapID:&3 " + map, author), "", false));
