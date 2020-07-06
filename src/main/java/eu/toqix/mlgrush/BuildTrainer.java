@@ -32,8 +32,8 @@ public final class BuildTrainer implements Listener {
     public List<Player> playersInJump = new ArrayList();
     public List<Player> playersTraining = new ArrayList<>();
 
-    private Location mlgSpawn = new Location(Bukkit.getWorld("world"), -24.5, 104, 178.5);
-    private Location jumpSpawn = new Location(Bukkit.getWorld("world"), -3.5, 105, 164.5);
+    private Location mlgSpawn = new Location(Bukkit.getWorld("world"), -24.5, 104, 178.5, 180, 0);
+    private Location jumpSpawn = new Location(Bukkit.getWorld("world"), -3.5, 105, 164.5, 270, 0);
 
     private HashMap<Player, Integer> blocksPlaced = new HashMap<>();
     private HashMap<Player, Integer> timeBridged = new HashMap<>();
@@ -52,8 +52,7 @@ public final class BuildTrainer implements Listener {
             double x = player.getLocation().getX();
             double y = player.getLocation().getY();
             double z = player.getLocation().getZ();
-            jumpSpawn.setYaw(180);
-            mlgSpawn.setYaw(270);
+
             start.setWorld(player.getWorld());
             if (x < -12 && x > -18 && z > 183 && z < 189) {
                 if (playersInBuild.contains(player)) {
@@ -146,7 +145,7 @@ public final class BuildTrainer implements Listener {
         timeJumped.remove(player);
 
         player.setFallDistance(0);
-        player.teleport(MLGRush.spawn);
+        player.teleport(jumpSpawn);
         player.getInventory().clear();
     }
 
@@ -228,7 +227,7 @@ public final class BuildTrainer implements Listener {
         if (playersInMLG.containsKey(player)) {
             player.getWorld().getBlockAt(new Location(player.getWorld(), -93, height, 182)).setType(Material.DIAMOND_BLOCK);
 
-            player.teleport(new Location(player.getWorld(), -92.5, height + 1, 182.5));
+            player.teleport(new Location(player.getWorld(), -92.5, height + 1, 182.5, 90, 90));
             player.getInventory().setItem(4, item);
 
 
@@ -282,7 +281,7 @@ public final class BuildTrainer implements Listener {
             if (!playersInMLG.get(player)) {
                 player.sendTitle(MessageCreator.translate("&cMLG Failed"), MessageCreator.translate("&7Du bist ein schlechter Minequafter"), 0, 50, 0);
                 player.getInventory().clear();
-                player.teleport(MLGRush.spawn);
+                player.teleport(mlgSpawn);
                 playersInMLG.remove(player);
                 playersTraining.remove(player);
             } else {
@@ -310,7 +309,7 @@ public final class BuildTrainer implements Listener {
         player.sendTitle(MessageCreator.translate("&cDu hast Verlassen"), MessageCreator.translate("&7Du bist ein schlechter Minequafter"), 0, 50, 0);
         player.sendMessage(MessageCreator.translate("&7[&bTrainer&7] You left the &6MLG-Trainer"));
         player.getInventory().clear();
-        player.teleport(MLGRush.spawn);
+        player.teleport(mlgSpawn);
         playersInMLG.remove(player);
         playersTraining.remove(player);
     }
@@ -320,7 +319,7 @@ public final class BuildTrainer implements Listener {
         if (playersInMLG.containsKey(player)) {
             if (!playersInMLG.get(player)) {
                 player.getInventory().clear();
-                player.teleport(MLGRush.spawn);
+                player.teleport(mlgSpawn);
                 playersInMLG.remove(player);
                 playersTraining.remove(player);
                 player.sendTitle(MessageCreator.translate("&6You Won"), MessageCreator.translate("&7Du bist ein guter Minequafter"), 0, 50, 0);
