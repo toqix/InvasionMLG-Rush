@@ -1,7 +1,6 @@
 package eu.toqix.mlgrush.Listeners;
 
 import eu.toqix.mlgrush.MLGRush;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,18 +22,16 @@ public class PlayerListeners implements Listener {
             event.setDamage(0);
         }
 
-        if (event.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK) {
-            Player player = (Player) event.getEntity();
-            if (MLGRush.getGameManager().queue.containsKey(player)) {
-                if (MLGRush.getGameManager().queue.get(player) == 0) {
-                    event.setCancelled(true);
-                }
-            }
-            if (MLGRush.getBuildManager().playerBuilding.containsKey(player) || MLGRush.getTrainer().playersTraining.contains(player)) {
+        Player player = (Player) event.getEntity();
+        if(MLGRush.getGameManager().queue.containsKey(player)) {
+            if(MLGRush.getGameManager().queue.get(player) == 0) {
                 event.setCancelled(true);
             }
-
         }
+        if (MLGRush.getBuildManager().playerBuilding.containsKey(player) || MLGRush.getTrainer().playersTraining.contains(player)) {
+            event.setCancelled(true);
+        }
+
     }
 
 

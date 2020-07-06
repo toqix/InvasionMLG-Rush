@@ -450,7 +450,7 @@ public final class BuildTrainer implements Listener {
                         } else if (mlgWins.containsKey(player)) {
                             actionbar = new TextComponent(MessageCreator.translate("&7Fails &c" + 0 + "  &7Wins: &6" + mlgWins.get(player)));
                         } else if (mlgFails.containsKey(player)) {
-                            actionbar = new TextComponent(MessageCreator.translate("&7Fails &c" + mlgFails.get(player) + "  &7Wins: &6" +0));
+                            actionbar = new TextComponent(MessageCreator.translate("&7Fails &c" + mlgFails.get(player) + "  &7Wins: &6" + 0));
                         }
 
                         player.spigot().sendMessage(ChatMessageType.ACTION_BAR, actionbar);
@@ -539,6 +539,7 @@ public final class BuildTrainer implements Listener {
 
                     if (ChatColor.stripColor(tool.getItemMeta().getDisplayName()).equals("Reset")) {
                         jumpDie(player);
+                        player.getInventory().setItem(0, StackCreator.createStack(Material.BARRIER, "&4Reset", Arrays.asList("&7Teleports you back"), "", false));
                     } else if (ChatColor.stripColor(tool.getItemMeta().getDisplayName()).equals("Leave")) {
                         leaveJumpAndRun(player);
                     }
@@ -551,8 +552,8 @@ public final class BuildTrainer implements Listener {
     public void onPlayerDamage(EntityDamageEvent event) {
         if (event.getEntity().getType() == EntityType.PLAYER) {
             Player player = (Player) event.getEntity();
-            if (event.getCause() == EntityDamageEvent.DamageCause.FALL) {
-                if (playersInMLG.containsKey(player)) {
+            if (playersInMLG.containsKey(player)) {
+                if (event.getCause() == EntityDamageEvent.DamageCause.FALL) {
                     if (player.getLocation().getY() < 120) {
                         mlgFailed(player);
                         event.setCancelled(true);

@@ -65,7 +65,7 @@ public class gameRunner implements Listener {
         instance = ins;
     }
 
-    public void runGame(Player player1, Player player2, Location p1, Location p2, String name, int games, int map, int height1) {
+    public void runGame(Player player1, Player player2, Location p1, Location p2, String name, String author, int games, int map, int height1) {
 
         height = height1;
 
@@ -134,8 +134,8 @@ public class gameRunner implements Listener {
                         player2.setLevel(5 - gameTime);
                     }
                     if (gameTime >= 2 && gameTime < 5) {
-                        player1.sendTitle(ChatColor.translateAlternateColorCodes('&', "&6" + pp1 + "&7 vs &6" + pp2), name + "  " + (5 - gameTime), 0, 30, 0);
-                        player2.sendTitle(ChatColor.translateAlternateColorCodes('&', "&6" + pp1 + "&7 vs &6" + pp2), name + "  " + (5 - gameTime), 0, 30, 0);
+                        player1.sendTitle(ChatColor.translateAlternateColorCodes('&', "&6" + pp1 + "&7 vs &6" + pp2), name + " by " + author, 0, 30, 0);
+                        player2.sendTitle(ChatColor.translateAlternateColorCodes('&', "&6" + pp1 + "&7 vs &6" + pp2), name + " by " + author, 0, 30, 0);
                         player1.playSound(player1.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
                         player2.playSound(player2.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
                     }
@@ -157,8 +157,8 @@ public class gameRunner implements Listener {
                         giveItems(player2);
                         player1.setGameMode(GameMode.SURVIVAL);
                         player2.setGameMode(GameMode.SURVIVAL);
-                        player1.playSound(player1.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 2);
-                        player2.playSound(player2.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 2);
+                        player1.playSound(player1.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 3, 2);
+                        player2.playSound(player2.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 3, 2);
                         playersOnMap = true;
                     }
 

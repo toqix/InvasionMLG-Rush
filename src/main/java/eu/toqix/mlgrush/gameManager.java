@@ -77,10 +77,8 @@ public final class gameManager implements Listener {
                             queue.put(player2, 1);
                             queue.put(player1, 1);
 
-                            player1.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&bMLG-Rush&7] &eA Match was found"));
-                            player2.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&bMLG-Rush&7] &eA Match was found"));
-
-                        } else {
+                            player1.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&bMLG-Rush&7] &eA Match with " + player2.getName() + " was found"));
+                            player2.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&bMLG-Rush&7] &eA Match with " + player1.getName() + " was found"));
 
                         }
                     }
@@ -99,7 +97,7 @@ public final class gameManager implements Listener {
                     } else {
                         chooseTime = 0;
 
-
+                        String author = "unknown";
                         gameRunner game = new gameRunner();
                         Bukkit.getPluginManager().registerEvents(game, MLGRush.getInstance());
                         game.saveInstance(game);
@@ -140,7 +138,11 @@ public final class gameManager implements Listener {
                         if (Maps.get(map).containsKey("height")) {
                             height = (Integer) Maps.get(map).get("height");
                         }
-                        game.runGame(player1, player2, spawn1, spawn2, (String) Maps.get(map).get("name"), games, map, height);
+                        if(Maps.get(map).containsKey("author")) {
+                            author = (String) Maps.get(map).get("author");
+                        }
+
+                        game.runGame(player1, player2, spawn1, spawn2, (String) Maps.get(map).get("name"), author, games, map, height);
 
                         player1 = null;
                         player2 = null;

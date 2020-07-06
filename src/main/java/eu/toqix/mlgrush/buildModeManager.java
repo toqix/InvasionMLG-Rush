@@ -113,6 +113,7 @@ public final class buildModeManager implements Listener {
         MLGRush.getGameManager().Maps.get(map).put("p2z", zcord);
         MLGRush.getGameManager().Maps.get(map).put("p2x", 0);
         MLGRush.getGameManager().Maps.get(map).put("p2y", 110);
+        MLGRush.getGameManager().Maps.get(map).put("author", player.getName());
         player.getInventory().setItem(0, StackCreator.createStack(Material.BLAZE_ROD, "&6Build Wand", Arrays.asList("&7Your Tool to edit the Map"), "", true));
         player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&bMLG-Rush-Build&7] &cBefore finishing or leaving please define the Spawns to prevent bugs"));
 
