@@ -3,6 +3,7 @@ package eu.toqix.mlgrush.commands;
 import eu.toqix.mlgrush.Utils.InvOpener;
 import eu.toqix.mlgrush.Utils.Inventories;
 import eu.toqix.mlgrush.MLGRush;
+import eu.toqix.mlgrush.Utils.MessageCreator;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -26,7 +27,6 @@ public class buildCommand implements CommandExecutor {
         }
         if (!MLGRush.getGameManager().queue.containsKey(player)) {
             if (MLGRush.getBuildManager().playerBuilding.keySet().size() < 1) {
-
                 InvOpener.openDelay(player, Inventories.chooseBuildMode());
             } else {
                 Boolean builderOnline = false;
@@ -43,6 +43,8 @@ public class buildCommand implements CommandExecutor {
                 }
 
             }
+        }else {
+            player.sendMessage(MessageCreator.translate("&7[&bMLG-Rush-Build&7] &c You can't join Build-Mode whilst in queue"));
         }
 
         return true;

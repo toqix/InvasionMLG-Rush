@@ -32,6 +32,9 @@ public final class BuildTrainer implements Listener {
     public List<Player> playersInJump = new ArrayList();
     public List<Player> playersTraining = new ArrayList<>();
 
+    private Location mlgSpawn = new Location(Bukkit.getWorld("world"), -24.5, 104, 178.5);
+    private Location jumpSpawn = new Location(Bukkit.getWorld("world"), -3.5, 105, 164.5);
+
     private HashMap<Player, Integer> blocksPlaced = new HashMap<>();
     private HashMap<Player, Integer> timeBridged = new HashMap<>();
     private HashMap<Player, Integer> jumpFails = new HashMap<>();
@@ -49,6 +52,8 @@ public final class BuildTrainer implements Listener {
             double x = player.getLocation().getX();
             double y = player.getLocation().getY();
             double z = player.getLocation().getZ();
+            jumpSpawn.setYaw(180);
+            mlgSpawn.setYaw(270);
             start.setWorld(player.getWorld());
             if (x < -12 && x > -18 && z > 183 && z < 189) {
                 if (playersInBuild.contains(player)) {

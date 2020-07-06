@@ -248,7 +248,7 @@ public class StackCreator implements Listener {
                                             String args = arg.toString();
                                             handleClick(command, args, playerP);
                                         }
-                                    }
+                                    }//zettelappel war hier
                                 }
                             }
                         }

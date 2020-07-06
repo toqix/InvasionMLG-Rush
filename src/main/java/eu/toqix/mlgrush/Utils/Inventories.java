@@ -1,6 +1,7 @@
 package eu.toqix.mlgrush.Utils;
 
 
+import com.sun.xml.internal.ws.wsdl.writer.document.FaultType;
 import eu.toqix.mlgrush.MLGRush;
 import eu.toqix.mlgrush.StackCreator;
 import org.bukkit.Bukkit;
@@ -9,6 +10,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.IntStream;
@@ -31,22 +33,26 @@ public class Inventories {
             Integer map = MLGRush.getPage() * 9 + i;
             HashMap<Integer, HashMap> maps = MLGRush.getGameManager().Maps;
             if (maps.containsKey(map)) {
+                String author = "Author not saved yet";
+                if(maps.get(map).containsKey("author")) {
+                    author = (String) maps.get(map).get("author");
+                }
                 String name = "&9" + maps.get(map).get("name");
                 if (maps.get(map).containsKey("finished")) {
                     if (!(Boolean) maps.get(map).get("finished")) {
-                        inv.setItem(slot, StackCreator.createStack(Material.BARRIER, name, Arrays.asList("&cMap not available!", "&7MapID:&3 " + map, "&7Author not saved yet"), "", false));
+                        inv.setItem(slot, StackCreator.createStack(Material.BARRIER, name, Arrays.asList("&cMap not available!", "&7MapID:&3 " + map, author), "", false));
                     } else {
                         if ((Boolean) maps.get(map).get("verfügbar")) {
-                            inv.setItem(slot, StackCreator.createStack(Material.SANDSTONE, name, Arrays.asList("&7MapID:&3 " + map, "&7Author not saved yet"), "m(" + map + ")", false));
+                            inv.setItem(slot, StackCreator.createStack(Material.SANDSTONE, name, Arrays.asList("&7MapID:&3 " + map, author), "m(" + map + ")", false));
                         } else {
-                            inv.setItem(slot, StackCreator.createStack(Material.BARRIER, name, Arrays.asList("&cMap not available!", "&7MapID:&3 " + map, "&7Author not saved yet"), "", false));
+                            inv.setItem(slot, StackCreator.createStack(Material.BARRIER, name, Arrays.asList("&cMap not available!", "&7MapID:&3 " + map, author), "", false));
                         }
                     }
                 } else {
                     if ((Boolean) maps.get(map).get("verfügbar")) {
-                        inv.setItem(slot, StackCreator.createStack(Material.SANDSTONE, name, Arrays.asList("&7MapID:&3 " + map, "&7Author not saved yet"), "m(" + map + ")", false));
+                        inv.setItem(slot, StackCreator.createStack(Material.SANDSTONE, name, Arrays.asList("&7MapID:&3 " + map, author), "m(" + map + ")", false));
                     } else {
-                        inv.setItem(slot, StackCreator.createStack(Material.BARRIER, name, Arrays.asList("&cMap not available!", "&7MapID:&3 " + map, "&7Author not saved yet"), "", false));
+                        inv.setItem(slot, StackCreator.createStack(Material.BARRIER, name, Arrays.asList("&cMap not available!", "&7MapID:&3 " + map, author), "", false));
                     }
                 }
             }
@@ -88,20 +94,24 @@ public class Inventories {
             Integer map = MLGRush.getPage() * 9 + i;
             HashMap<Integer, HashMap> maps = MLGRush.getGameManager().Maps;
             if (maps.containsKey(map)) {
+                String author = "Author not saved yet";
+                if(maps.get(map).containsKey("author")) {
+                    author = (String) maps.get(map).get("author");
+                }
                 String name = "&9" + maps.get(map).get("name");
                 if (maps.get(map).containsKey("finished")) {
                     if (!(Boolean) maps.get(map).get("finished") && (Boolean) maps.get(map).get("verfügbar")) {
-                        inv.setItem(slot, StackCreator.createStack(Material.SANDSTONE, name, Arrays.asList("&7MapID:&3 " + map, "&7Map unfinished or beeing edited", "&7Author not saved yet"), "e(" + map + ")", false));
+                        inv.setItem(slot, StackCreator.createStack(Material.SANDSTONE, name, Arrays.asList("&7MapID:&3 " + map, "&7Map unfinished or beeing edited", author ), "e(" + map + ")", false));
                     }else if((Boolean) maps.get(map).get("finished") && (Boolean) maps.get(map).get("verfügbar")) {
-                        inv.setItem(slot, StackCreator.createStack(Material.SANDSTONE, name, Arrays.asList("&7MapID:&3 " + map, "&7Map unfinished or beeing edited", "&7Author not saved yet"), "e(" + map + ")", false));
+                        inv.setItem(slot, StackCreator.createStack(Material.SANDSTONE, name, Arrays.asList("&7MapID:&3 " + map, "&7Map unfinished or beeing edited", author), "e(" + map + ")", false));
                     }else {
-                        inv.setItem(slot, StackCreator.createStack(Material.BARRIER, name, Arrays.asList("&cMap not available!", "&7MapID:&3 " + map, "&7Author not saved yet"), "", false));
+                        inv.setItem(slot, StackCreator.createStack(Material.BARRIER, name, Arrays.asList("&cMap not available!", "&7MapID:&3 " + map, author), "", false));
                     }
                 } else {
                     if ((Boolean) maps.get(map).get("verfügbar")) {
-                        inv.setItem(slot, StackCreator.createStack(Material.SANDSTONE, name, Arrays.asList("&7MapID:&3 " + map, "&7Author not saved yet"), "e(" + map + ")", false));
+                        inv.setItem(slot, StackCreator.createStack(Material.SANDSTONE, name, Arrays.asList("&7MapID:&3 " + map, author), "e(" + map + ")", false));
                     } else {
-                        inv.setItem(slot, StackCreator.createStack(Material.BARRIER, name, Arrays.asList("&cMap not available!", "&7MapID:&3 " + map, "&7Author not saved yet"), "", false));
+                        inv.setItem(slot, StackCreator.createStack(Material.BARRIER, name, Arrays.asList("&cMap not available!", "&7MapID:&3 " + map, author), "", false));
                     }
                 }
             }
@@ -135,7 +145,7 @@ public class Inventories {
         inv.setItem(5, StackCreator.createStack(Material.LIME_DYE, "&7&l+", Arrays.asList(""), "b(r+)", false));
         inv.setItem(14, StackCreator.createStack(Material.RED_BED, "&6Rounds", Arrays.asList("&7Current rounds: &l" + MLGRush.getBuildManager().getRounds(), "&7Increase or decrease", "&7the rounds to win"), "", true));
         inv.setItem(23, StackCreator.createStack(Material.RED_DYE, "&7&l-", Arrays.asList(""), "b(r-)", false));
-        inv.setItem(8, StackCreator.createStack(Material.LIME_DYE, "&a&lFinish", Arrays.asList("&7Quits the Build Mode", "&7and saves the curren Map", "&aAlso enables it"), "b(save)", false));
+        inv.setItem(8, StackCreator.createStack(Material.LIME_DYE, "&a&lFinish", Arrays.asList("&7Quits the Build Mode", "&7and saves the current Map", "&aAlso enables it"), "b(save)", false));
 
         inv.setItem(18, StackCreator.createStack(Material.RED_STAINED_GLASS, "&7Delete the Map Data", Arrays.asList("&7Deletes all the saved Data about the Map", "&7This Doesn't delete the Blocks", "&7Only all data which makes the Map a Map"), "b(delete)", false));
         inv.setItem(26, StackCreator.createStack(Material.RED_DYE, "&cDelete the Map", Arrays.asList("&cDeletes the whole Map", "&c&lThis is not undoable"), "b(deleteall)" ,false));
@@ -147,10 +157,12 @@ public class Inventories {
         for(int i = 0; i<27; i++) {
             inv.setItem(i, StackCreator.getNothing());
         }
-        inv.setItem(11, StackCreator.createStack(Material.COBWEB, "&fCobWeb MLG" , Arrays.asList("&7Mit höhe"), "t(web)", false));
-        inv.setItem(12, StackCreator.createStack(Material.COBWEB, "&fCobweb MLG", Arrays.asList("&7Endless"), "t(sweb)", true));
-        inv.setItem(15, StackCreator.createStack(Material.LADDER, "&6Leiter MLG", Arrays.asList("&7Ohne Blöcke") , "t(leiter)" , false));
-        inv.setItem(14, StackCreator.createStack(Material.LADDER, "&6Leiter MLG", Arrays.asList("&7Endless") , "t(sleiter)" , true));
+        inv.setItem(11, StackCreator.createStack(Material.COBWEB, "&fCobWeb MLG" , Collections.singletonList("&7Mit höhe"), "t(web)", false));
+        inv.setItem(12, StackCreator.createStack(Material.COBWEB, "&fCobweb MLG", Collections.singletonList("&7Endless"), "t(sweb)", true));
+        inv.setItem(13, StackCreator.createStack(Material.WATER_BUCKET, "&9Water MLG",Collections.singletonList("&7Normal"), "t(water)", false));
+        inv.setItem(13, StackCreator.createStack(Material.WATER_BUCKET, "&9Water MLG",Collections.singletonList("&7Normal"), "t(water)", false));
+        inv.setItem(15, StackCreator.createStack(Material.LADDER, "&6Leiter MLG", Collections.singletonList("&7Ohne Blöcke"), "t(leiter)" , false));
+        inv.setItem(14, StackCreator.createStack(Material.LADDER, "&6Leiter MLG", Collections.singletonList("&7Endless"), "t(sleiter)" , true));
         return inv;
     }
 
