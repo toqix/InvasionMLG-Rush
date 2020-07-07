@@ -112,7 +112,9 @@ public final class BuildTrainer implements Listener {
                             if (!playersInJump.contains(player)) {
                                 playersInJump.add(player);
                             }
-                            playersTraining.add(player);
+                            if(!playersTraining.contains(player)) {
+                                playersTraining.add(player);
+                            }
                             player.sendTitle(ChatColor.GOLD + "Jump And Run", "joined", 0, 50, 0);
                             player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&bTrainer&7] You joined the Jump And Run by Dia_block_mcg use &e/leave&7 to leave"));
                             player.getInventory().clear();
@@ -128,7 +130,9 @@ public final class BuildTrainer implements Listener {
                             playersInJump.add(player);
 
                         }
-                        playersTraining.add(player);
+                        if(!playersTraining.contains(player)) {
+                            playersTraining.add(player);
+                        }
                         player.sendTitle(ChatColor.GOLD + "Jump And Run", "joined", 0, 50, 0);
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&bTrainer&7] You joined the Jump And Run by Dia_block_mcg use &e/leave&7 to leave"));
                         player.getInventory().clear();
@@ -165,6 +169,8 @@ public final class BuildTrainer implements Listener {
                         player.teleport(start);
                         if (!playersInBuild.contains(player)) {
                             playersInBuild.add(player);
+                        }
+                        if(!playersTraining.contains(player)) {
                             playersTraining.add(player);
                         }
                         giveItems(player);
@@ -177,6 +183,9 @@ public final class BuildTrainer implements Listener {
                 } else {
                     if (!playersInBuild.contains(player)) {
                         playersInBuild.add(player);
+
+                    }
+                    if(!playersTraining.contains(player)) {
                         playersTraining.add(player);
                     }
                     giveItems(player);
@@ -247,7 +256,9 @@ public final class BuildTrainer implements Listener {
                 player.sendMessage(MessageCreator.translate("&7[&bTrainer&7] You are going to perform a &6Cobweb MLG"));
                 mlgMode.put(player, "web");
                 playersInMLG.put(player, false);
-                playersTraining.add(player);
+                if(!playersTraining.contains(player)) {
+                    playersTraining.add(player);
+                }
                 runMlg(player, random.nextInt(45) + 135, new ItemStack(Material.COBWEB, 1), "CobWeb");
                 player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
                 break;
@@ -255,7 +266,9 @@ public final class BuildTrainer implements Listener {
                 player.sendMessage(MessageCreator.translate("&7[&bTrainer&7] You joined the Endless Cobweb Mode"));
                 mlgMode.put(player, "web");
                 playersInMLG.put(player, true);
-                playersTraining.add(player);
+                if(!playersTraining.contains(player)) {
+                    playersTraining.add(player);
+                }
                 runMlg(player, random.nextInt(45) + 135, new ItemStack(Material.COBWEB, 1), "CobWeb");
                 player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
                 break;
@@ -263,14 +276,18 @@ public final class BuildTrainer implements Listener {
                 player.sendMessage(MessageCreator.translate("&7[&bTrainer&7] You are going to perform a &6Leiter MLG"));
                 mlgMode.put(player, "ladder");
                 playersInMLG.put(player, false);
-                playersTraining.add(player);
+                if(!playersTraining.contains(player)) {
+                    playersTraining.add(player);
+                }
                 runMlg(player, random.nextInt(20) + 120, new ItemStack(Material.LADDER, 5), "Leiter");
                 player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
                 break;
             case "sleiter":
                 mlgMode.put(player, "ladder");
                 playersInMLG.put(player, true);
-                playersTraining.add(player);
+                if(!playersTraining.contains(player)) {
+                    playersTraining.add(player);
+                }
                 runMlg(player, random.nextInt(20) + 120, new ItemStack(Material.LADDER, 1), "CobWeb");
                 player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
                 player.sendMessage(MessageCreator.translate("&7[&bTrainer&7] You joined the Endless Leiter Mode"));
