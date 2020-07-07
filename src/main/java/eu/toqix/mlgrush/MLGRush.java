@@ -1,5 +1,6 @@
 package eu.toqix.mlgrush;
 
+import com.google.gson.Gson;
 import eu.toqix.mlgrush.Listeners.*;
 import eu.toqix.mlgrush.commands.*;
 import org.bukkit.Bukkit;
@@ -12,6 +13,8 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,9 +33,9 @@ public final class MLGRush extends JavaPlugin {
     public String pp2 = null;
     Player player1;
     Player player2;
-    public Map<String, Integer> playerBlocks = new HashMap<String, Integer>();
-    public Map<String, Integer> playerPicke = new HashMap<String, Integer>();
-    public Map<String, Integer> playerStick = new HashMap<String, Integer>();
+    public Map<String, Integer> playerBlocks = new HashMap<>();
+    public Map<String, Integer> playerPicke = new HashMap<>();
+    public Map<String, Integer> playerStick = new HashMap<>();
 
 
 
@@ -51,6 +54,8 @@ public final class MLGRush extends JavaPlugin {
     private static Integer page;
     private BuildTrainer buildTrainer;
 
+    private Gson gson = new Gson();
+
 
     @Override
     public void onEnable() {
@@ -67,7 +72,7 @@ public final class MLGRush extends JavaPlugin {
 
         manager.init();
 
-        getLogger().info(Bukkit.getWorld("world").getClass().getSimpleName());
+        //getLogger().info(Bukkit.getWorld("world").getClass().getSimpleName());
         setInstance(this);
         setPage(0);
         // Plugin startup logic
@@ -201,7 +206,7 @@ public final class MLGRush extends JavaPlugin {
 
 
     }
-    private void safeConfig() throws FileNotFoundException, IOException {
+    private void safeConfig() throws IOException {
 
         for(Map.Entry<String, Integer> stick:playerStick.entrySet()) {
 
@@ -218,13 +223,11 @@ public final class MLGRush extends JavaPlugin {
 
         }
 
-        String filepath = this.getDataFolder().getPath() + "/maps.properties";
+        String filepath = this.getDataFolder().getPath() + "/maps.json";
         File file = new File(filepath);
 
-        FileOutputStream f = new FileOutputStream(file);
-        ObjectOutputStream s = new ObjectOutputStream(f);
-        s.writeObject(manager.Maps);
-        s.close();
+        String toSave = gson.toJson(manager);
+        Files.write(Paths.get(file.getAbsolutePath()), toSave.getBytes());
 
         //this.getConfig().set("maps", manager.Maps);
         //this.saveConfig();
