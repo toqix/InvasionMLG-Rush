@@ -183,16 +183,11 @@ public class gameRunner implements Listener {
                     if (player1score >= games) {
                         player1.sendTitle(ChatColor.GOLD + pp1 + ChatColor.GRAY + " hat Gewonnen", "Invasion Devs, @toqix", 0, 60, 0);
                         player2.sendTitle(ChatColor.GOLD + pp1 + ChatColor.GRAY + " hat Gewonnen", "Invasion Devs, @toqix", 0, 60, 0);
-
                         endGame(player1, player2);
-
                     } else if (player2score >= games) {
                         player1.sendTitle(ChatColor.GOLD + pp2 + ChatColor.GRAY + " hat Gewonnen", "Invasion Devs, @toqix", 0, 60, 0);
                         player2.sendTitle(ChatColor.GOLD + pp2 + ChatColor.GRAY + " hat Gewonnen", "Invasion Devs, @toqix", 0, 60, 0);
-
                         endGame(player2, player1);
-
-
                     }
                 } else {
                     player1.sendMessage(ChatColor.translateAlternateColorCodes('&', "§7[§bMLG-Rush§7] §cthe Game has end!"));

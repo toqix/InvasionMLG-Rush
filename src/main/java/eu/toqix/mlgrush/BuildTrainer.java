@@ -111,8 +111,8 @@ public final class BuildTrainer implements Listener {
                             player.teleport(start);
                             if (!playersInJump.contains(player)) {
                                 playersInJump.add(player);
-                                playersTraining.add(player);
                             }
+                            playersTraining.add(player);
                             player.sendTitle(ChatColor.GOLD + "Jump And Run", "joined", 0, 50, 0);
                             player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&bTrainer&7] You joined the Jump And Run by Dia_block_mcg use &e/leave&7 to leave"));
                             player.getInventory().clear();
@@ -126,8 +126,9 @@ public final class BuildTrainer implements Listener {
                     } else {
                         if (!playersInJump.contains(player)) {
                             playersInJump.add(player);
-                            playersTraining.add(player);
+
                         }
+                        playersTraining.add(player);
                         player.sendTitle(ChatColor.GOLD + "Jump And Run", "joined", 0, 50, 0);
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&bTrainer&7] You joined the Jump And Run by Dia_block_mcg use &e/leave&7 to leave"));
                         player.getInventory().clear();
@@ -142,6 +143,7 @@ public final class BuildTrainer implements Listener {
     public void leaveJumpAndRun(Player player) {
         player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&bTrainer&7] You left the Jump And Run"));
         playersInJump.remove(player);
+        playersTraining.remove(player);
         timeJumped.remove(player);
 
         player.setFallDistance(0);
@@ -496,8 +498,6 @@ public final class BuildTrainer implements Listener {
                 pressure();
             }
         }
-
-
     }
 
 

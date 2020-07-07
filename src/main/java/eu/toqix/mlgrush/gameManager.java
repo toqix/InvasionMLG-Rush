@@ -69,6 +69,9 @@ public final class gameManager implements Listener {
             public void run() {
                 for (Map.Entry<Player, Integer> Queue : queue.entrySet()) {
                     if (Queue.getValue() == 0) {
+                        if(!Queue.getKey().isOnline()) {
+                            queue.remove(Queue.getKey());
+                        }
                         if (player1 == null) {
                             player1 = Queue.getKey();
 
@@ -81,6 +84,17 @@ public final class gameManager implements Listener {
                             player2.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&bMLG-Rush&7] &eA Match with " + player1.getName() + " was found"));
 
                         }
+
+                    }
+                }
+                if(player1 != null) {
+                    if(!player1.isOnline()) {
+                        player1 = null;
+                    }
+                }
+                if(player2 != null) {
+                    if(!player2.isOnline()) {
+                        player2 = null;
                     }
                 }
                 if (player1 != null && player2 != null) {

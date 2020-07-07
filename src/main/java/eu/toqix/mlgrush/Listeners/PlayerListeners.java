@@ -23,6 +23,7 @@ public class PlayerListeners implements Listener {
         }
 
         Player player = (Player) event.getEntity();
+
         if(MLGRush.getGameManager().queue.containsKey(player)) {
             if(MLGRush.getGameManager().queue.get(player) == 0) {
                 event.setCancelled(true);

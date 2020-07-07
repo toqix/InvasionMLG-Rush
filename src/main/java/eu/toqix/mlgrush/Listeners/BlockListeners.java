@@ -17,24 +17,10 @@ import org.bukkit.inventory.ItemStack;
 
 public class BlockListeners implements Listener {
 
-    private int mapx = 30;
-    private int mapy = 30;
-    private int mapz = 25;
 
     @EventHandler
     public void onBlockDestroy(BlockBreakEvent event) {
 
-        MLGRush mlgrush = MLGRush.getInstance();
-        Player player = event.getPlayer();
-        /*
-        if(!MLGRush.getInstance().buildMode) {
-
-            Block block = event.getBlock();
-
-            if (block.getType() != Material.SANDSTONE) {
-                event.setCancelled(true);
-            }
-        }*/
         Boolean inGame = false;
         if(MLGRush.getGameManager().queue.containsKey(event.getPlayer())) {
             if(MLGRush.getGameManager().queue.get(event.getPlayer()) == 1) {
@@ -56,11 +42,13 @@ public class BlockListeners implements Listener {
         }
 
         if(!MLGRush.getBuildManager().playerBuilding.containsKey(event.getPlayer()) && !inGame && !MLGRush.getTrainer().playersTraining.contains(event.getPlayer())) {
-
-                if(event.getBlock().getType() != Material.COBWEB || event.getBlock().getType() != Material.LADDER) {
+                if(!MLGRush.getTrainer().playersInMLG.containsKey(event.getPlayer())) {
                     event.setCancelled(true);
+                }else {
+                    if (event.getBlock().getType() != Material.COBWEB || event.getBlock().getType() != Material.LADDER) {
+                        event.setCancelled(true);
+                    }
                 }
-
         }
        /* Block block = event.getBlock();
 
