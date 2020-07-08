@@ -3,6 +3,7 @@ package eu.toqix.mlgrush;
 import com.google.gson.Gson;
 import eu.toqix.mlgrush.Listeners.*;
 import eu.toqix.mlgrush.commands.*;
+import eu.toqix.mlgrush.trainer.BuildTrainer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
