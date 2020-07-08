@@ -50,8 +50,8 @@ public class gameRunner implements Listener {
 
 
     private int gameTime = 0;
-    private int mapint;
-    private int height = 10;
+    private Integer mapint;
+    private double height = 10;
     private boolean gameHasStarted = false;
 
     private boolean playersOnMap = false;
@@ -65,7 +65,7 @@ public class gameRunner implements Listener {
         instance = ins;
     }
 
-    public void runGame(Player player1, Player player2, Location p1, Location p2, String name, String author, int games, int map, int height1) {
+    public void runGame(Player player1, Player player2, Location p1, Location p2, String name, String author, double games, Integer map, double height1) {
 
         height = height1;
 
@@ -346,7 +346,7 @@ public class gameRunner implements Listener {
             Bukkit.getPlayer(pp1).sendMessage(ChatColor.translateAlternateColorCodes('&', "§7[§bMLG-Rush§7] §f" + pp2 + "&e hat das Bett von abgebaut"));
             Bukkit.getPlayer(pp2).sendMessage(ChatColor.translateAlternateColorCodes('&', "§7[§bMLG-Rush§7] §f" + pp2 + "&e hat das Bett von abgebaut"));
         }
-        MLGRush.resetBlocks(mapx + 1, mapy + height + 1, realz - mapz - 1, realz + mapz + 1);
+        MLGRush.resetBlocks(mapx + 1, (int) (mapy + height + 1), realz - mapz - 1, realz + mapz + 1);
     }
 
 
@@ -385,12 +385,12 @@ public class gameRunner implements Listener {
         int y = block.getY();
         int z = block.getZ();
         HashMap theMap = MLGRush.getGameManager().Maps.get(mapint);
-        int px = (int) theMap.get("p1x");
-        int py = (int) theMap.get("p1y");
-        int pz = (int) theMap.get("p1z");
-        int px2 = (int) theMap.get("p2x");
-        int py2 = (int) theMap.get("p2y");
-        int pz2 = (int) theMap.get("p2z");
+        double px = (double) theMap.get("p1x");
+        double py = (double) theMap.get("p1y");
+        double pz = (double) theMap.get("p1z");
+        double px2 = (double) theMap.get("p2x");
+        double py2 = (double) theMap.get("p2y");
+        double pz2 = (double) theMap.get("p2z");
 
         if (x == px && y == py && z == pz) {
             event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&cDu darfst hier keinen Block plazieren!"));

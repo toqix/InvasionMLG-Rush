@@ -143,6 +143,7 @@ public final class MLGRush extends JavaPlugin {
         getCommand("leave").setExecutor(new leaveCommand());
         getCommand("god").setExecutor(new godCommand());
         getCommand("name").setExecutor(new setName());
+        getCommand("reset").setExecutor(new ResetCommand());
     }
 
     private void listenerRegistration() {
@@ -168,7 +169,7 @@ public final class MLGRush extends JavaPlugin {
         return page;
     }
 
-    private void loadData() throws OptionalDataException, ClassNotFoundException, IOException{
+    public void loadData() throws OptionalDataException, ClassNotFoundException, IOException{
         for(String str:getConfig().getKeys(true)) {
             if(str.contains("player.inventory.stick.")) {
                 int p = getConfig().getInt(str);
@@ -207,7 +208,7 @@ public final class MLGRush extends JavaPlugin {
 
 
     }
-    private void safeConfig() throws IOException {
+    public void safeConfig() throws IOException {
 
         for(Map.Entry<String, Integer> stick:playerStick.entrySet()) {
 

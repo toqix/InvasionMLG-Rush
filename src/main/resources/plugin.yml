@@ -22,3 +22,6 @@ commands:
     description: reloads the mlgrush plugin
   name:
     description: cool name
+  reset:
+    description: Reset everything
+    permission: MLGrush.reset
