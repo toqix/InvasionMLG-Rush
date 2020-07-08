@@ -22,33 +22,38 @@ public class BlockListeners implements Listener {
     public void onBlockDestroy(BlockBreakEvent event) {
 
         Boolean inGame = false;
-        if(MLGRush.getGameManager().queue.containsKey(event.getPlayer())) {
-            if(MLGRush.getGameManager().queue.get(event.getPlayer()) == 1) {
+        if (MLGRush.getGameManager().queue.containsKey(event.getPlayer())) {
+            if (MLGRush.getGameManager().queue.get(event.getPlayer()) == 1) {
                 inGame = true;
             }
         }
-        if(!MLGRush.getBuildManager().playerBuilding.containsKey(event.getPlayer()) && !inGame) {
+        if (!MLGRush.getBuildManager().playerBuilding.containsKey(event.getPlayer()) && !inGame) {
             event.setCancelled(true);
         }
 
     }
+
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {
-        Boolean inGame = false;
-        if(MLGRush.getGameManager().queue.containsKey(event.getPlayer())) {
-            if(MLGRush.getGameManager().queue.get(event.getPlayer()) == 1) {
+        boolean inGame = false;
+        if (MLGRush.getGameManager().queue.containsKey(event.getPlayer())) {
+            if (MLGRush.getGameManager().queue.get(event.getPlayer()) == 1) {
                 inGame = true;
             }
         }
 
-        if(!MLGRush.getBuildManager().playerBuilding.containsKey(event.getPlayer()) && !inGame && !MLGRush.getTrainer().playersTraining.contains(event.getPlayer())) {
-                if(!MLGRush.getTrainer().playersInMLG.containsKey(event.getPlayer())) {
+        if (!MLGRush.getBuildManager().playerBuilding.containsKey(event.getPlayer()) && !inGame) {
+            if (MLGRush.getTrainer().playersInMLG.containsKey(event.getPlayer())) {
+                if (event.getBlock().getType() != Material.COBWEB && event.getBlock().getType() != Material.LADDER) {
                     event.setCancelled(true);
-                }else {
-                    if (event.getBlock().getType() != Material.COBWEB || event.getBlock().getType() != Material.LADDER) {
+                }
+            } else if (MLGRush.getTrainer().playersInBuild.contains(event.getPlayer())) {
+                    if(event.getBlock().getType() != Material.SANDSTONE) {
                         event.setCancelled(true);
                     }
-                }
+            } else {
+                event.setCancelled(true);
+            }
         }
        /* Block block = event.getBlock();
 
@@ -90,12 +95,13 @@ public class BlockListeners implements Listener {
         }*/
 
     }
+
     @EventHandler
     public void onItemClick(PlayerInteractEvent event) {
         if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             if (event.getClickedBlock().getType() == Material.BEACON) {
                 event.setCancelled(true);
-            }else if(event.getClickedBlock().getType() == Material.RED_BED) {
+            } else if (event.getClickedBlock().getType() == Material.RED_BED) {
                 event.setCancelled(true);
             }
         }

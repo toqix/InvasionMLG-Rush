@@ -32,8 +32,8 @@ public final class BuildTrainer implements Listener {
     public List<Player> playersInJump = new ArrayList();
     public List<Player> playersTraining = new ArrayList<>();
 
-    private Location mlgSpawn = new Location(Bukkit.getWorld("world"), -24.5, 104, 178.5, 180, 0);
-    private Location jumpSpawn = new Location(Bukkit.getWorld("world"), -3.5, 105, 164.5, 270, 0);
+    private Location mlgSpawn = new Location(Bukkit.getWorld("world"), -24.5, 104, 178.5, 90, 0);
+    private Location jumpSpawn = new Location(Bukkit.getWorld("world"), -3.5, 105, 164.5, 0, 0);
 
     private HashMap<Player, Integer> blocksPlaced = new HashMap<>();
     private HashMap<Player, Integer> timeBridged = new HashMap<>();
@@ -118,7 +118,8 @@ public final class BuildTrainer implements Listener {
                             player.sendTitle(ChatColor.GOLD + "Jump And Run", "joined", 0, 50, 0);
                             player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&bTrainer&7] You joined the Jump And Run by Dia_block_mcg use &e/leave&7 to leave"));
                             player.getInventory().clear();
-                            player.getInventory().setItem(0, StackCreator.createStack(Material.BARRIER, "&fReset", Arrays.asList("&7Teleports you back"), "", false));
+                            player.getInventory().setItem(0, StackCreator.createStack(Material.APPLE, "&4Reset", Arrays.asList("&7Teleports you back"), "", false));
+                            player.getInventory().setItem(8, StackCreator.createStack(Material.RED_DYE, "&cLeave", Arrays.asList("&7Leaves the Game"), "", false));
 
                         }
                     }
@@ -136,7 +137,7 @@ public final class BuildTrainer implements Listener {
                         player.sendTitle(ChatColor.GOLD + "Jump And Run", "joined", 0, 50, 0);
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&bTrainer&7] You joined the Jump And Run by Dia_block_mcg use &e/leave&7 to leave"));
                         player.getInventory().clear();
-                        player.getInventory().setItem(0, StackCreator.createStack(Material.BARRIER, "&4Reset", Arrays.asList("&7Teleports you back"), "", false));
+                        player.getInventory().setItem(0, StackCreator.createStack(Material.APPLE, "&4Reset", Arrays.asList("&7Teleports you back"), "", false));
                         player.getInventory().setItem(8, StackCreator.createStack(Material.RED_DYE, "&cLeave", Arrays.asList("&7Leaves the Game"), "", false));
                     }
                 }
@@ -230,7 +231,7 @@ public final class BuildTrainer implements Listener {
         player.teleport(jumpStart);
         timeJumped.put(player, 0);
         player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1, 2);
-        player.getInventory().setItem(0, StackCreator.createStack(Material.BARRIER, "&4Reset", Arrays.asList("&7Teleports you back"), "", false));
+        player.getInventory().setItem(0, StackCreator.createStack(Material.APPLE, "&4Reset", Arrays.asList("&7Teleports you back"), "", false));
         player.getInventory().setItem(8, StackCreator.createStack(Material.RED_DYE, "&cLeave", Arrays.asList("&7Leaves the Game"), "", false));
     }
 
@@ -429,6 +430,7 @@ public final class BuildTrainer implements Listener {
                     secs = timeJumped.get(player) / 2;
                     mins = secs / 60;
                     hours = mins / 60;
+                    mins = mins - hours*60;
                     secs = secs - (mins * 60) - (hours * 3600);
                     TextComponent actionbar = new TextComponent(ChatColor.GRAY + "Fails: " + 0 + ChatColor.GRAY + "   Time: " + hours + ":" + mins + ":" + secs);
                     if (jumpFails.containsKey(player)) {
@@ -543,9 +545,13 @@ public final class BuildTrainer implements Listener {
                 }, 20);
             }
         } else if (playersInMLG.containsKey(player)) {
-            Bukkit.getScheduler().runTaskLater(MLGRush.getInstance(), () -> {
-                player.getWorld().getBlockAt(block.getX(), block.getY(), block.getZ()).setType(Material.AIR);
-            }, 20);
+            if(block.getY() > 130) {
+                event.setCancelled(true);
+            }else {
+                Bukkit.getScheduler().runTaskLater(MLGRush.getInstance(), () -> {
+                    player.getWorld().getBlockAt(block.getX(), block.getY(), block.getZ()).setType(Material.AIR);
+                }, 20);
+            }
         }
     }
 
@@ -560,7 +566,6 @@ public final class BuildTrainer implements Listener {
 
                     if (ChatColor.stripColor(tool.getItemMeta().getDisplayName()).equals("Reset")) {
                         jumpDie(player);
-                        player.getInventory().setItem(0, StackCreator.createStack(Material.BARRIER, "&4Reset", Arrays.asList("&7Teleports you back"), "", false));
                     } else if (ChatColor.stripColor(tool.getItemMeta().getDisplayName()).equals("Leave")) {
                         leaveJumpAndRun(player);
                     }

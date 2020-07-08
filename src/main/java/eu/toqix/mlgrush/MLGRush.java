@@ -29,25 +29,12 @@ public final class MLGRush extends JavaPlugin {
 
     private static gameManager manager;
 
-    public String pp1 = null;
-    public String pp2 = null;
-    Player player1;
-    Player player2;
     public Map<String, Integer> playerBlocks = new HashMap<>();
     public Map<String, Integer> playerPicke = new HashMap<>();
     public Map<String, Integer> playerStick = new HashMap<>();
 
+    public static Location spawn = new Location(Bukkit.getWorld("world"), 0.5, 105, 155.5, 0 ,0);
 
-
-    public static Location p1 = new Location(Bukkit.getWorld("world"), 13.5, 101, 0.5);
-    public static Location p2 = new Location(Bukkit.getWorld("world"), -13.5, 101, 0.5);
-    public static Location spawn = new Location(Bukkit.getWorld("world"), 0.5, 105, 155.5);
-
-    public int gameTime = 0;
-    public boolean gameHasStarted = false;
-    public boolean playerStartedGame = false;
-
-    private boolean playersOnMap = false;
 
     private static BuildTrainer trainer;
 
@@ -76,9 +63,7 @@ public final class MLGRush extends JavaPlugin {
         setInstance(this);
         setPage(0);
         // Plugin startup logic
-        p1.setYaw(90);
-        p2.setYaw(270);
-        spawn.setYaw(0);
+
         buildTrainer.runTrainer();
         trainer = buildTrainer;
 

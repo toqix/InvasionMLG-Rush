@@ -21,18 +21,18 @@ public class PlayerListeners implements Listener {
         if (event.getCause() != EntityDamageEvent.DamageCause.MAGIC) {
             event.setDamage(0);
         }
+        if(event.getEntity()instanceof Player) {
+            Player player = (Player) event.getEntity();
 
-        Player player = (Player) event.getEntity();
-
-        if(MLGRush.getGameManager().queue.containsKey(player)) {
-            if(MLGRush.getGameManager().queue.get(player) == 0) {
+            if (MLGRush.getGameManager().queue.containsKey(player)) {
+                if (MLGRush.getGameManager().queue.get(player) == 0) {
+                    event.setCancelled(true);
+                }
+            }
+            if (MLGRush.getBuildManager().playerBuilding.containsKey(player) || MLGRush.getTrainer().playersTraining.contains(player)) {
                 event.setCancelled(true);
             }
         }
-        if (MLGRush.getBuildManager().playerBuilding.containsKey(player) || MLGRush.getTrainer().playersTraining.contains(player)) {
-            event.setCancelled(true);
-        }
-
     }
 
 
