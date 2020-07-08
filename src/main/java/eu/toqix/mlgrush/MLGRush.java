@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import eu.toqix.mlgrush.Listeners.*;
 import eu.toqix.mlgrush.commands.*;
+import eu.toqix.mlgrush.trainer.BuildTrainer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;

@@ -1,5 +1,7 @@
-package eu.toqix.mlgrush;
+package eu.toqix.mlgrush.trainer;
 
+import eu.toqix.mlgrush.MLGRush;
+import eu.toqix.mlgrush.StackCreator;
 import eu.toqix.mlgrush.Utils.InvOpener;
 import eu.toqix.mlgrush.Utils.Inventories;
 import eu.toqix.mlgrush.Utils.MessageCreator;
@@ -26,13 +28,13 @@ import java.util.*;
 public final class BuildTrainer implements Listener {
     public List<Player> playersInBuild = new ArrayList();
     public HashMap<Player, Boolean> playersInMLG = new HashMap<>();
-    private HashMap<Player, String> mlgMode = new HashMap<>();
+    private HashMap<Player, mlgType> mlgMode = new HashMap<>();
     private HashMap<Player, Integer> mlgWins = new HashMap<>();
     private HashMap<Player, Integer> mlgFails = new HashMap<>();
     public List<Player> playersInJump = new ArrayList();
     public List<Player> playersTraining = new ArrayList<>();
 
-    private Location mlgSpawn = new Location(Bukkit.getWorld("world"), -24.5, 104, 178.5, 90, 0);
+    private Location mlgSpawn = new Location(Bukkit.getWorld("world"), -24.5, 104, 179.5, 90, 0);
     private Location jumpSpawn = new Location(Bukkit.getWorld("world"), -3.5, 105, 164.5, 0, 0);
 
     private HashMap<Player, Integer> blocksPlaced = new HashMap<>();
@@ -255,7 +257,7 @@ public final class BuildTrainer implements Listener {
         switch (mode) {
             case "web":
                 player.sendMessage(MessageCreator.translate("&7[&bTrainer&7] You are going to perform a &6Cobweb MLG"));
-                mlgMode.put(player, "web");
+                mlgMode.put(player, mlgType.COBWEB);
                 playersInMLG.put(player, false);
                 if(!playersTraining.contains(player)) {
                     playersTraining.add(player);
@@ -265,7 +267,7 @@ public final class BuildTrainer implements Listener {
                 break;
             case "sweb":
                 player.sendMessage(MessageCreator.translate("&7[&bTrainer&7] You joined the Endless Cobweb Mode"));
-                mlgMode.put(player, "web");
+                mlgMode.put(player, mlgType.COBWEB);
                 playersInMLG.put(player, true);
                 if(!playersTraining.contains(player)) {
                     playersTraining.add(player);
@@ -275,7 +277,7 @@ public final class BuildTrainer implements Listener {
                 break;
             case "leiter":
                 player.sendMessage(MessageCreator.translate("&7[&bTrainer&7] You are going to perform a &6Leiter MLG"));
-                mlgMode.put(player, "ladder");
+                mlgMode.put(player, mlgType.LADDER);
                 playersInMLG.put(player, false);
                 if(!playersTraining.contains(player)) {
                     playersTraining.add(player);
@@ -284,7 +286,7 @@ public final class BuildTrainer implements Listener {
                 player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 1);
                 break;
             case "sleiter":
-                mlgMode.put(player, "ladder");
+                mlgMode.put(player, mlgType.LADDER);
                 playersInMLG.put(player, true);
                 if(!playersTraining.contains(player)) {
                     playersTraining.add(player);
@@ -313,10 +315,10 @@ public final class BuildTrainer implements Listener {
                 } else {
                     mlgFails.put(player, 1);
                 }
-                if (mlgMode.get(player) == "web") {
+                if (mlgMode.get(player) == mlgType.COBWEB) {
                     item = new ItemStack(Material.COBWEB, 1);
                     runMlg(player, random.nextInt(45) + 135, item, "Endless Mode");
-                } else if (mlgMode.get(player) == "ladder") {
+                } else if (mlgMode.get(player) == mlgType.LADDER) {
                     item = new ItemStack(Material.LADDER, 5);
                     runMlg(player, random.nextInt(20) + 120, item, "Endless Mode");
                 }
@@ -353,10 +355,10 @@ public final class BuildTrainer implements Listener {
                     mlgWins.put(player, 1);
                 }
 
-                if (mlgMode.get(player) == "web") {
+                if (mlgMode.get(player) == mlgType.COBWEB) {
                     item = new ItemStack(Material.COBWEB, 1);
                     runMlg(player, random.nextInt(45) + 135, item, "Endless Mode");
-                } else if (mlgMode.get(player) == "ladder") {
+                } else if (mlgMode.get(player) == mlgType.LADDER) {
                     item = new ItemStack(Material.LADDER, 5);
                     runMlg(player, random.nextInt(20) + 120, item, "Endless Mode");
                 }
