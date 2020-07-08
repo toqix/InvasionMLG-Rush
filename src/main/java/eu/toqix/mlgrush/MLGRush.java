@@ -1,6 +1,7 @@
 package eu.toqix.mlgrush;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import eu.toqix.mlgrush.Listeners.*;
 import eu.toqix.mlgrush.commands.*;
 import org.bukkit.Bukkit;
@@ -11,10 +12,13 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.BoundingBox;
 
 import java.io.*;
+import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -182,12 +186,23 @@ public final class MLGRush extends JavaPlugin {
                 playerBlocks.put(str.substring(24), p);
             }
         }
-        String filepath = this.getDataFolder().getPath() + "/maps.properties";
+        getLogger().info("Loading maps");
+        String filepath = this.getDataFolder().getPath() + "/maps.json";
         File file = new File(filepath);
-        FileInputStream f = new FileInputStream(file);
-        ObjectInputStream s = new ObjectInputStream(f);
-        manager.Maps = (HashMap<Integer, HashMap>) s.readObject();
-        s.close();
+        InputStream is = new FileInputStream(file);
+        BufferedReader buf = new BufferedReader(new InputStreamReader(is));
+
+        String line = buf.readLine();
+        StringBuilder sb = new StringBuilder();
+
+        while(line != null){
+            sb.append(line).append("\n");
+            line = buf.readLine();
+        }
+
+        String fileAsString = sb.toString();
+        Type type = new TypeToken<HashMap<Integer, HashMap>>(){}.getType();
+        manager.Maps = gson.fromJson(fileAsString, type);
 
 
     }
@@ -211,7 +226,7 @@ public final class MLGRush extends JavaPlugin {
         String filepath = this.getDataFolder().getPath() + "/maps.json";
         File file = new File(filepath);
 
-        String toSave = gson.toJson(manager);
+        String toSave = gson.toJson(manager.Maps);
         Files.write(Paths.get(file.getAbsolutePath()), toSave.getBytes());
 
         //this.getConfig().set("maps", manager.Maps);
