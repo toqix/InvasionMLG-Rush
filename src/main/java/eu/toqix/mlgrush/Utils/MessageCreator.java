@@ -28,5 +28,8 @@ public class MessageCreator {
         toReturn.append(t("&7\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500"));
         return toReturn.toString();
     }
+    public static String prefix(String prefix, String message) {
+        return translate("&7[&b" + prefix + "&7] " + message);
+    }
 
 }

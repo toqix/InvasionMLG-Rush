@@ -2,6 +2,7 @@ package eu.toqix.mlgrush;
 
 import eu.toqix.mlgrush.Utils.InvOpener;
 import eu.toqix.mlgrush.Utils.Inventories;
+import eu.toqix.mlgrush.Utils.MessageCreator;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
@@ -18,7 +19,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.*;
 
 public final class buildModeManager implements Listener {
-    public HashMap<Player, Integer> playerBuilding = new HashMap<>();
+    public HashMap<Player, buildMode> playerBuilding = new HashMap<>();
     public int map;
     private double height = 10;
     private double rounds = 10;
@@ -35,19 +36,19 @@ public final class buildModeManager implements Listener {
                         playerBuilding.remove(player);
                         quitBuildMode(player, false, false);
                     }
-                    if(playerBuilding.get(player) > 1) {
+                    if (playerBuilding.get(player) != buildMode.MAIN) {
                         TextComponent actionbar1 = new TextComponent(ChatColor.translateAlternateColorCodes('&', "&7Use &c/leave&7"));
                         player.spigot().sendMessage(ChatMessageType.ACTION_BAR, actionbar1);
                     }
                 }
             }
-        }.runTaskTimer(MLGRush.getInstance(), 0, 20);
+        }.runTaskTimer(MLGRush.getInstance(), 0, 40);
     }
 
-    public void deleteMap(Boolean total) {
-        if(!total) {
-            MLGRush.getGameManager().Maps.remove(map);
-        }else {
+    public void deleteMap(boolean total) {
+        if (!total) {
+            //MLGRush.getGameManager().Maps.remove(map);
+        } else {
             /*
             MLGRush.getGameManager().Maps.remove(map);
             for (int xa = -30;xa<30;xa++) {
@@ -67,23 +68,142 @@ public final class buildModeManager implements Listener {
 
     }
 
+    public void editMapInventory(Player player, String args) {
+        if (!playerBuilding.containsKey(player)) {
+            InvOpener.closeDelay(player);
+            int Map = Integer.parseInt(args);
+            String author = "unkown";
+            if (MLGRush.getGameManager().Maps.get(Map).containsKey("author")) {
+                author = (String) MLGRush.getGameManager().Maps.get(Map).get("author");
+            }
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&bMLG-Rush-Build&7] You are going to edit " + MLGRush.getGameManager().Maps.get(Integer.parseInt(args)).get("name") + " by " + author));
+
+            player.sendTitle(ChatColor.translateAlternateColorCodes('&', "&6Enterd Build Mode"), "Editing: " + MLGRush.getGameManager().Maps.get(Map).get("name") + "  by " + author, 6, 60, 2);
+
+            if (MLGRush.getGameManager().Maps.get(Map).containsKey("verfügbar")) {
+                MLGRush.getGameManager().Maps.get(Map).put("verfügbar", false);
+                MLGRush.getGameManager().Maps.get(Map).put("finished", false);
+                editMap(Map, player);
+            }
+        }else {
+            player.sendMessage(MessageCreator.prefix("MLG-Rush-Build", "&cYou can't join the Build Mode twice"));
+        }
+    }
+
+    public void inventoryHandler(String args, Player player) {
+        boolean builderOnline = false;
+        Player builder = null;
+        for (Map.Entry<Player, buildMode> playerbuildModeEntry : playerBuilding.entrySet()) {
+            if (playerbuildModeEntry.getValue() == buildMode.MAIN) {
+                builderOnline = true;
+                builder = playerbuildModeEntry.getKey();
+                break;
+            }
+        }
+
+        if (args.equals("edit")) {
+            if (!builderOnline) {
+                if (player.isOp()) {
+                    InvOpener.openDelay(player, Inventories.editAMap());
+                } else {
+                    InvOpener.closeDelay(player);
+                    player.sendMessage(MessageCreator.translate("&7[&bMLG-Rush-Build&7] &cSorry you don't have permissions to edit this map if you think this is a mistake please contact us on Discord"));
+                }
+            } else {
+                InvOpener.closeDelay(player);
+                player.sendMessage(MessageCreator.prefix("MLG-Rush-Build", "&cSorry but there is already a builder online, but you can help him"));
+            }
+        } else if (args.equals("back")) {
+            InvOpener.openDelay(player, Inventories.chooseBuildMode());
+        } else if (args.equals("quit")) {
+            quitBuildMode(player, false, false);
+        } else if (args.equals("save")) {
+            quitBuildMode(player, true, false);
+        } else if (args.equals("create")) {
+            if (!builderOnline) {
+                InvOpener.closeDelay(player);
+                player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&bMLG-Rush-Build&7] You are going to create a new Map"));
+                player.sendTitle(ChatColor.translateAlternateColorCodes('&', "&6Enterd Build Mode"), "Creating: A Great New Map", 6, 60, 2);
+                createMap(player);
+            } else {
+                InvOpener.closeDelay(player);
+                player.sendMessage(MessageCreator.prefix("MLG-Rush-Build", "&cSorry but there is already a bulder online, but you can help him"));
+            }
+        } else if (args.equals("red")) {
+            if (builderOnline) {
+                if (player == builder) {
+                    InvOpener.closeDelay(player);
+                    player.getInventory().setItem(4, StackCreator.createStack(Material.RED_STAINED_GLASS_PANE, "&cTeam Red", Arrays.asList("&7Sets the respawn point", "&7of Team Red"), "", false));
+                }
+            } else {
+                player.sendMessage(ChatColor.RED + "this shouldn't happen your not the Builder");
+            }
+        } else if (args.equals("blue")) {
+            if (builderOnline) {
+                if (player == builder) {
+                    InvOpener.closeDelay(player);
+                    player.getInventory().setItem(4, StackCreator.createStack(Material.BLUE_STAINED_GLASS_PANE, "&9Team Blue", Arrays.asList("&7Sets the respawn point", "&7of Team Blue"), "", false));
+                }
+            } else {
+                player.sendMessage(ChatColor.RED + "this shouldn't happen your not the Builder");
+            }
+
+        } else if (args.equals("help")) {
+            if (builderOnline) {
+                if (builder != null) {
+                    helpBuilder(builder, player);
+                } else {
+                    player.sendMessage(ChatColor.RED + "Oops Something went wrong hit toqix when this error stays");
+                }
+            } else {
+                player.sendMessage(ChatColor.RED + "Oops Something went wrong hit toqix when this error stays");
+            }
+
+        } else if (args.equals("delete")) {
+            /*
+            deleteMap(false);
+            quitBuildMode(player, false, true);
+
+             */
+        } else if (args.equals("deleteall")) {
+            /*
+            deleteMap(true);
+            quitBuildMode(player, false, true);
+             */
+        } else if (args.equals("lobby")) {
+            editLobby(player);
+        } else if (args.equals("h+")) {
+            setHeight(getHeight() + 1);
+            InvOpener.openDelay(player, Inventories.buildModeWand());
+        } else if (args.equals("h-")) {
+            if (getHeight() > 0) {
+                setHeight(getHeight() - 1);
+            }
+            InvOpener.openDelay(player, Inventories.buildModeWand());
+        } else if (args.equals("r+")) {
+            setRounds(getRounds() + 1);
+            InvOpener.openDelay(player, Inventories.buildModeWand());
+        } else if (args.equals("r-")) {
+            if (getRounds() > 2) {
+                setRounds(getRounds() - 1);
+            }
+            InvOpener.openDelay(player, Inventories.buildModeWand());
+        }
+    }
+
     public void editMap(int mapnumber, Player player) {
         map = mapnumber;
-        //zcord = (int) MLGRush.getGameManager().Maps.get(MLGRush.getGameManager().Maps.keySet().size() -1).get("p1z");
-
-
         HashMap map = MLGRush.getGameManager().Maps.get(mapnumber);
         if (map.containsKey("height")) {
             height = (double) map.get("height");
-    }
+        }
         if (map.containsKey("rounds")) {
             rounds = (double) map.get("rounds");
         }
-
         player.setGameMode(GameMode.CREATIVE);
         player.setFlying(true);
         player.getInventory().clear();
-        playerBuilding.put(player, 1);
+        playerBuilding.put(player, buildMode.MAIN);
         player.getInventory().setItem(0, StackCreator.createStack(Material.BLAZE_ROD, "&6Build Wand", Arrays.asList("&7Your Tool to edit the Map"), "", true));
         double realz = (double) map.get("p1z");
         MLGRush.resetBlocks(32, 20, (int) realz - 26, (int) realz + 26);
@@ -92,41 +212,42 @@ public final class buildModeManager implements Listener {
     }
 
 
-
     public void createMap(Player player) {
-        playerBuilding.put(player, 1);
+        if(!playerBuilding.containsKey(player)) {
+            playerBuilding.put(player, buildMode.MAIN);
 
-        zcord = (int) MLGRush.getGameManager().Maps.get(MLGRush.getGameManager().Maps.size() -1).get("p1z");
-        zcord -= 60;
-        player.setGameMode(GameMode.CREATIVE);
-        player.getWorld().getBlockAt(0, 100, (int) zcord).setType(Material.DIAMOND_BLOCK);
-        player.teleport(new Location(player.getWorld(), 0, 110, zcord));
-        player.setFlying(true);
-        map = MLGRush.getGameManager().Maps.size();
-        MLGRush.getGameManager().Maps.put(map, new HashMap());
-        MLGRush.getGameManager().Maps.get(map).put("name", "Default Name");
-        MLGRush.getGameManager().Maps.get(map).put("verfügbar", false);
-        MLGRush.getGameManager().Maps.get(map).put("finished", false);
-        MLGRush.getGameManager().Maps.get(map).put("p1z", zcord);
-        MLGRush.getGameManager().Maps.get(map).put("p1x", 0);
-        MLGRush.getGameManager().Maps.get(map).put("p1y", 110);
-        MLGRush.getGameManager().Maps.get(map).put("p2z", zcord);
-        MLGRush.getGameManager().Maps.get(map).put("p2x", 0);
-        MLGRush.getGameManager().Maps.get(map).put("p2y", 110);
-        MLGRush.getGameManager().Maps.get(map).put("author", player.getName());
-        player.getInventory().setItem(0, StackCreator.createStack(Material.BLAZE_ROD, "&6Build Wand", Arrays.asList("&7Your Tool to edit the Map"), "", true));
-        player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&bMLG-Rush-Build&7] &cBefore finishing or leaving please define the Spawns to prevent bugs"));
-
+            zcord = (int) MLGRush.getGameManager().Maps.get(MLGRush.getGameManager().Maps.size() - 1).get("p1z");
+            zcord -= 60;
+            player.setGameMode(GameMode.CREATIVE);
+            player.getWorld().getBlockAt(0, 100, (int) zcord).setType(Material.DIAMOND_BLOCK);
+            player.teleport(new Location(player.getWorld(), 0, 110, zcord));
+            player.setFlying(true);
+            map = MLGRush.getGameManager().Maps.size();
+            MLGRush.getGameManager().Maps.put(map, new HashMap());
+            MLGRush.getGameManager().Maps.get(map).put("name", "Default Name");
+            MLGRush.getGameManager().Maps.get(map).put("verfügbar", false);
+            MLGRush.getGameManager().Maps.get(map).put("finished", false);
+            MLGRush.getGameManager().Maps.get(map).put("p1z", zcord);
+            MLGRush.getGameManager().Maps.get(map).put("p1x", 0);
+            MLGRush.getGameManager().Maps.get(map).put("p1y", 110);
+            MLGRush.getGameManager().Maps.get(map).put("p2z", zcord);
+            MLGRush.getGameManager().Maps.get(map).put("p2x", 0);
+            MLGRush.getGameManager().Maps.get(map).put("p2y", 110);
+            MLGRush.getGameManager().Maps.get(map).put("author", player.getName());
+            player.getInventory().setItem(0, StackCreator.createStack(Material.BLAZE_ROD, "&6Build Wand", Arrays.asList("&7Your Tool to edit the Map"), "", true));
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&bMLG-Rush-Build&7] &cBefore finishing or leaving please define the Spawns to prevent bugs"));
+        }else {
+            player.sendMessage(MessageCreator.prefix("MLG-Rush-Build", "&cYou can't join the Build-Mode twice"));
+        }
     }
 
     public void helpBuilder(Player builder, Player playerP) {
 
-        MLGRush.getBuildManager().playerBuilding.put(playerP, 5);
+        playerBuilding.put(playerP, buildMode.HELPER);
 
         playerP.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&bMLG-Rush-Build&7] You are going to help " + builder.getName()));
-        if (playerP != null) {
-            playerP.sendTitle(ChatColor.translateAlternateColorCodes('&', "&6Entered Build Mode"), "Helping building", 6, 60, 2);
-        }
+        playerP.sendTitle(ChatColor.translateAlternateColorCodes('&', "&6Entered Build Mode"), "Helping building", 6, 60, 2);
+
 
         playerP.teleport(builder.getLocation());
         playerP.setGameMode(GameMode.CREATIVE);
@@ -139,24 +260,24 @@ public final class buildModeManager implements Listener {
 
     public void editLobby(Player player) {
         InvOpener.closeDelay(player);
-        if(player.isOp()) {
+        if (player.isOp()) {
             player.setGameMode(GameMode.CREATIVE);
             player.getInventory().clear();
             player.setFlying(true);
-            playerBuilding.put(player, 4);
+            playerBuilding.put(player, buildMode.LOBBY);
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&bMLG-Rush-Build&7] You are now editing the Lobby please be careful all changes are permanent"));
             player.sendTitle(ChatColor.translateAlternateColorCodes('&', "&6Enterd Build Mode"), "Editing the Lobby", 6, 60, 2);
             TextComponent actionbar = new TextComponent(ChatColor.translateAlternateColorCodes('&', "To leave this mode use &c/leave"));
             player.spigot().sendMessage(ChatMessageType.ACTION_BAR, actionbar);
-        }else {
+        } else {
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&bMLG-Rush-Build&7] &cYou have to be OP to perform this action"));
         }
     }
 
-    public void quitBuildMode(Player player, Boolean enableMap, Boolean delete) {
+    public void quitBuildMode(Player player, boolean enableMap, boolean delete) {
         playerBuilding.remove(player);
-        for(Map.Entry<Player, Integer> build : playerBuilding.entrySet()) {
-            if(build.getValue() == 5) {
+        for (Map.Entry<Player, buildMode> build : playerBuilding.entrySet()) {
+            if (build.getValue() == buildMode.HELPER) {
                 playerBuilding.remove(build.getKey());
                 build.getKey().sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&bMLG-Rush-Build&7] You have left Build Mode, you're ready to play now"));
                 build.getKey().teleport(MLGRush.spawn);
@@ -168,7 +289,7 @@ public final class buildModeManager implements Listener {
         player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&bMLG-Rush-Build&7] You have left Build Mode, you're ready to play now"));
         player.teleport(MLGRush.spawn);
         player.setGameMode(GameMode.SURVIVAL);
-        if(!delete) {
+        if (!delete) {
             player.sendTitle(ChatColor.translateAlternateColorCodes('&', "&6Leaving Build Mode"), ChatColor.translateAlternateColorCodes('&', "&7Your Map will be &asaved"), 5, 50, 0);
             MLGRush.getGameManager().Maps.get(map).put("verfügbar", true);
             if (enableMap) {
@@ -234,7 +355,7 @@ public final class buildModeManager implements Listener {
     @EventHandler
     public void onItemClick(PlayerInteractEvent event) {
         if (playerBuilding.containsKey(event.getPlayer())) {
-            if (playerBuilding.get(event.getPlayer()) == 1) {
+            if (playerBuilding.get(event.getPlayer()) == buildMode.MAIN) {
                 if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
                     ItemStack tool = event.getPlayer().getItemInHand();
                     if (tool.hasItemMeta()) {

@@ -328,6 +328,7 @@ public class gameRunner implements Listener {
                     player.sendMessage(ChatColor.RED + "Du kannst dein eigenes Bett nicht abbauen");
                 } else {
                     bedRespawn(2);
+
                 }
             }
         }
@@ -339,12 +340,12 @@ public class gameRunner implements Listener {
         respawn(p2p, Bukkit.getPlayer(pp2), p2Yaw);
         if (winner == 1) {
             player1score++;
-            Bukkit.getPlayer(pp1).sendMessage(ChatColor.translateAlternateColorCodes('&', "§7[§bMLG-Rush§7] §f" + pp1 + "&e hat das Bett von abgebaut"));
-            Bukkit.getPlayer(pp2).sendMessage(ChatColor.translateAlternateColorCodes('&', "§7[§bMLG-Rush§7] §f" + pp1 + "&e hat das Bett von abgebaut"));
+            Bukkit.getPlayer(pp1).sendMessage(ChatColor.translateAlternateColorCodes('&', "§7[§bMLG-Rush§7] §f" + pp1 + "&e hat das Bett von" + pp2 + "abgebaut"));
+            Bukkit.getPlayer(pp2).sendMessage(ChatColor.translateAlternateColorCodes('&', "§7[§bMLG-Rush§7] §f" + pp1 + "&e hat das Bett von" + pp2 + "abgebaut"));
         } else {
             player2score++;
-            Bukkit.getPlayer(pp1).sendMessage(ChatColor.translateAlternateColorCodes('&', "§7[§bMLG-Rush§7] §f" + pp2 + "&e hat das Bett von abgebaut"));
-            Bukkit.getPlayer(pp2).sendMessage(ChatColor.translateAlternateColorCodes('&', "§7[§bMLG-Rush§7] §f" + pp2 + "&e hat das Bett von abgebaut"));
+            Bukkit.getPlayer(pp1).sendMessage(ChatColor.translateAlternateColorCodes('&', "§7[§bMLG-Rush§7] §f" + pp2 + "&e hat das Bett von" + pp1 + "abgebaut"));
+            Bukkit.getPlayer(pp2).sendMessage(ChatColor.translateAlternateColorCodes('&', "§7[§bMLG-Rush§7] §f" + pp2 + "&e hat das Bett von" + pp1 + "abgebaut"));
         }
         MLGRush.resetBlocks(mapx + 1, (int) (mapy + height + 1), realz - mapz - 1, realz + mapz + 1);
     }
@@ -352,6 +353,9 @@ public class gameRunner implements Listener {
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
+        if(gameTime <= 5) {
+            event.setCancelled(true);
+        }
         Block block = event.getBlock();
         Player player = event.getPlayer();
 
@@ -379,6 +383,9 @@ public class gameRunner implements Listener {
 
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {
+        if(gameTime <= 5) {
+            event.setCancelled(true);
+        }
         Block block = event.getBlock();
 
         int x = block.getX();

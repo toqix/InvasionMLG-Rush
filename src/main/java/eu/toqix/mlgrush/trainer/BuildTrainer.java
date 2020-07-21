@@ -2,6 +2,7 @@ package eu.toqix.mlgrush.trainer;
 
 import eu.toqix.mlgrush.MLGRush;
 import eu.toqix.mlgrush.StackCreator;
+import eu.toqix.mlgrush.Utils.CoinManager;
 import eu.toqix.mlgrush.Utils.InvOpener;
 import eu.toqix.mlgrush.Utils.Inventories;
 import eu.toqix.mlgrush.Utils.MessageCreator;
@@ -110,7 +111,6 @@ public final class BuildTrainer implements Listener {
                             player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&bTrainer&7] Sorry you can't join the Jump and Run whilst in the Trainer"));
                         } else {
                             player.setGameMode(GameMode.SURVIVAL);
-                            player.teleport(start);
                             if (!playersInJump.contains(player)) {
                                 playersInJump.add(player);
                             }
@@ -204,7 +204,7 @@ public final class BuildTrainer implements Listener {
             Bukkit.getScheduler().runTaskLater(MLGRush.getInstance(), () -> player.teleport(start), 35);
             int time = timeBridged.get(player);
             timeBridged.put(player, 0);
-            player.sendTitle(ChatColor.translateAlternateColorCodes('&', "&6Ziel erreicht"), ChatColor.translateAlternateColorCodes('&', "&7in &l" + time + "&7 sekunden"), 0, 40, 0);
+            player.sendTitle(ChatColor.translateAlternateColorCodes('&', "&6Ziel erreicht"), ChatColor.translateAlternateColorCodes('&', "&7in &l" + time/2 + "&7 sekunden"), 0, 40, 0);
             blocksPlaced.put(player, 0);
 
         }
@@ -345,6 +345,7 @@ public final class BuildTrainer implements Listener {
                 playersInMLG.remove(player);
                 playersTraining.remove(player);
                 player.sendTitle(MessageCreator.translate("&6You Won"), MessageCreator.translate("&7Du bist ein guter Minequafter"), 0, 50, 0);
+                CoinManager.giveCoins(player, 15);
             } else {
                 player.sendTitle(MessageCreator.translate("&6MLG Won"), MessageCreator.translate("&7Du bist ein guter Minequafter"), 0, 50, 0);
                 player.getInventory().clear();

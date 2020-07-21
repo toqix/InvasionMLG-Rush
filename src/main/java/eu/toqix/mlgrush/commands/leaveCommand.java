@@ -1,8 +1,7 @@
 package eu.toqix.mlgrush.commands;
 
 import eu.toqix.mlgrush.MLGRush;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
+import eu.toqix.mlgrush.buildMode;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.command.Command;
@@ -26,9 +25,9 @@ public class leaveCommand implements CommandExecutor {
                 player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[§bMLG-Rush&7] &fDu kannst das Spiel erst verlassen wenn es begonnen hat"));
             }
         }else if(MLGRush.getBuildManager().playerBuilding.containsKey(player)) {
-            if(MLGRush.getBuildManager().playerBuilding.get(player) == 1) {
+            if(MLGRush.getBuildManager().playerBuilding.get(player) == buildMode.MAIN) {
                 player.sendMessage(ChatColor.translateAlternateColorCodes('&', "§7[§bMLG-Rush-Build§7] §cThe main Builder can't leave the Build No!"));
-            }else if(MLGRush.getBuildManager().playerBuilding.get(player) == 4) {
+            }else if(MLGRush.getBuildManager().playerBuilding.get(player) == buildMode.LOBBY) {
                 player.sendMessage(ChatColor.translateAlternateColorCodes('&', "§7[§bMLG-Rush-Build§7] §cYou left the Build-Lobby Mode!"));
                 MLGRush.getBuildManager().playerBuilding.remove(player);
                 player.teleport(MLGRush.spawn);
