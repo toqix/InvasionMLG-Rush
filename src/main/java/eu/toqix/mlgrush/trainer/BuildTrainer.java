@@ -2,10 +2,7 @@ package eu.toqix.mlgrush.trainer;
 
 import eu.toqix.mlgrush.MLGRush;
 import eu.toqix.mlgrush.StackCreator;
-import eu.toqix.mlgrush.Utils.CoinManager;
-import eu.toqix.mlgrush.Utils.InvOpener;
-import eu.toqix.mlgrush.Utils.Inventories;
-import eu.toqix.mlgrush.Utils.MessageCreator;
+import eu.toqix.mlgrush.Utils.*;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
@@ -204,7 +201,7 @@ public final class BuildTrainer implements Listener {
             Bukkit.getScheduler().runTaskLater(MLGRush.getInstance(), () -> player.teleport(start), 35);
             int time = timeBridged.get(player);
             timeBridged.put(player, 0);
-            player.sendTitle(ChatColor.translateAlternateColorCodes('&', "&6Ziel erreicht"), ChatColor.translateAlternateColorCodes('&', "&7in &l" + time/2 + "&7 sekunden"), 0, 40, 0);
+            player.sendTitle(ChatColor.translateAlternateColorCodes('&', "&6Ziel erreicht"), ChatColor.translateAlternateColorCodes('&', "&7in &l" + TimeManager.getTimeString(time/2)), 0, 40, 0);
             blocksPlaced.put(player, 0);
 
         }
@@ -426,18 +423,11 @@ public final class BuildTrainer implements Listener {
                     } else {
                         timeJumped.put(player, 1);
                     }
-                    int hours;
-                    int mins;
                     int secs;
-
                     secs = timeJumped.get(player) / 2;
-                    mins = secs / 60;
-                    hours = mins / 60;
-                    mins = mins - hours*60;
-                    secs = secs - (mins * 60) - (hours * 3600);
-                    TextComponent actionbar = new TextComponent(ChatColor.GRAY + "Fails: " + 0 + ChatColor.GRAY + "   Time: " + hours + ":" + mins + ":" + secs);
+                    TextComponent actionbar = new TextComponent(ChatColor.GRAY + "Fails: " + 0 + ChatColor.GRAY + "   Time: " + TimeManager.getTimeString(secs));
                     if (jumpFails.containsKey(player)) {
-                        actionbar = new TextComponent(ChatColor.GRAY + "Fails: " + ChatColor.RED + jumpFails.get(player) + ChatColor.GRAY + "   Time: " + hours + ":" + mins + ":" + secs);
+                        actionbar = new TextComponent(ChatColor.GRAY + "Fails: " + ChatColor.RED + jumpFails.get(player) + ChatColor.GRAY + "   Time: " + TimeManager.getTimeString(secs));
                     }
                     player.spigot().sendMessage(ChatMessageType.ACTION_BAR, actionbar);
                     if (py < 106) {
