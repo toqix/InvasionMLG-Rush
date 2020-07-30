@@ -5,5 +5,6 @@ public enum statsType {
     KILLS,
     DEATHS,
     WINS,
-    ROUNDS
+    ROUNDS,
+    PLAYTIME
 }

@@ -1,6 +1,8 @@
 package eu.toqix.mlgrush;
 
 import eu.toqix.mlgrush.Utils.CoinManager;
+import eu.toqix.mlgrush.Utils.StatsManager;
+import eu.toqix.mlgrush.Utils.statsType;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
@@ -55,7 +57,7 @@ public class gameRunner implements Listener {
     private Integer mapint;
     private double height = 10;
     private boolean gameHasStarted = false;
-
+    private StatsManager statsManager = MLGRush.getStatsManager();
     private boolean playersOnMap = false;
 
     private boolean gamHasEnd = false;
@@ -190,11 +192,13 @@ public class gameRunner implements Listener {
                         player1.sendTitle(ChatColor.GOLD + pp1 + ChatColor.GRAY + " hat Gewonnen", "Invasion Devs, @toqix", 0, 60, 0);
                         player2.sendTitle(ChatColor.GOLD + pp1 + ChatColor.GRAY + " hat Gewonnen", "Invasion Devs, @toqix", 0, 60, 0);
                         CoinManager.calculateCoins(player1, player1score-player2score, player2, gameTime);
+                        statsManager.addStats(player1, statsType.WINS, 1);
                         endGame(player1, player2);
                     } else if (player2score >= games) {
                         player1.sendTitle(ChatColor.GOLD + pp2 + ChatColor.GRAY + " hat Gewonnen", "Invasion Devs, @toqix", 0, 60, 0);
                         player2.sendTitle(ChatColor.GOLD + pp2 + ChatColor.GRAY + " hat Gewonnen", "Invasion Devs, @toqix", 0, 60, 0);
                         CoinManager.calculateCoins(player2, player2score-player1score, player1, gameTime);
+                        statsManager.addStats(player2, statsType.WINS, 1);
                         endGame(player2, player1);
                     }
                 } else {
@@ -240,6 +244,7 @@ public class gameRunner implements Listener {
         spawn.setYaw(rotation);
         player.setFallDistance(0);
         player.teleport(spawn);
+        statsManager.addStats(player, statsType.DEATHS, 1);
     }
 
     private void giveItems(Player player) {
@@ -319,6 +324,8 @@ public class gameRunner implements Listener {
             HandlerList.unregisterAll(instance);
             MLGRush.getGameManager().leaveQueue(player1);
             MLGRush.getGameManager().leaveQueue(player2);
+            statsManager.addStats(player1, statsType.ROUNDS, 1);
+            statsManager.addStats(player2, statsType.ROUNDS, 1);
         }
     }
 
@@ -347,17 +354,20 @@ public class gameRunner implements Listener {
     }
 
     private void bedRespawn(int winner) {
-
-        respawn(p1p, Bukkit.getPlayer(pp1), p1Yaw);
-        respawn(p2p, Bukkit.getPlayer(pp2), p2Yaw);
+        Player player1 = Bukkit.getPlayer(pp1);
+        Player player2 = Bukkit.getPlayer(pp2);
+        respawn(p1p, player1, p1Yaw);
+        respawn(p2p, player2, p2Yaw);
         if (winner == 1) {
             player1score++;
-            Bukkit.getPlayer(pp1).sendMessage(ChatColor.translateAlternateColorCodes('&', "§7[§bMLG-Rush§7] §f" + pp1 + "&e hat das Bett von &f" + pp2 + " &eabgebaut"));
-            Bukkit.getPlayer(pp2).sendMessage(ChatColor.translateAlternateColorCodes('&', "§7[§bMLG-Rush§7] §f" + pp1 + "&e hat das Bett von &f" + pp2 + " &eabgebaut"));
+            statsManager.addStats(player1, statsType.BEDS, 1);
+            player1.sendMessage(ChatColor.translateAlternateColorCodes('&', "§7[§bMLG-Rush§7] §f" + pp1 + "&e hat das Bett von &f" + pp2 + " &eabgebaut"));
+            player2.sendMessage(ChatColor.translateAlternateColorCodes('&', "§7[§bMLG-Rush§7] §f" + pp1 + "&e hat das Bett von &f" + pp2 + " &eabgebaut"));
         } else {
             player2score++;
-            Bukkit.getPlayer(pp1).sendMessage(ChatColor.translateAlternateColorCodes('&', "§7[§bMLG-Rush§7] §f" + pp2 + "&e hat das Bett von &f" + pp1 + " &eabgebaut"));
-            Bukkit.getPlayer(pp2).sendMessage(ChatColor.translateAlternateColorCodes('&', "§7[§bMLG-Rush§7] §f" + pp2 + "&e hat das Bett von &f" + pp1 + " &eabgebaut"));
+            statsManager.addStats(player2, statsType.BEDS, 1);
+            player1.sendMessage(ChatColor.translateAlternateColorCodes('&', "§7[§bMLG-Rush§7] §f" + pp2 + "&e hat das Bett von &f" + pp1 + " &eabgebaut"));
+            player2.sendMessage(ChatColor.translateAlternateColorCodes('&', "§7[§bMLG-Rush§7] §f" + pp2 + "&e hat das Bett von &f" + pp1 + " &eabgebaut"));
         }
         MLGRush.resetBlocks(mapx + 1, (int) (mapy + height + 1), realz - mapz - 1, realz + mapz + 1);
     }
