@@ -85,7 +85,7 @@ public final class buildModeManager implements Listener {
                 MLGRush.getGameManager().Maps.get(Map).put("finished", false);
                 editMap(Map, player);
             }
-        }else {
+        } else {
             player.sendMessage(MessageCreator.prefix("MLG-Rush-Build", "&cYou can't join the Build Mode twice"));
         }
     }
@@ -101,142 +101,167 @@ public final class buildModeManager implements Listener {
             }
         }
 
-        if (args.equals("edit")) {
-            if (!builderOnline) {
-                if (player.isOp()) {
-                    InvOpener.openDelay(player, Inventories.editAMap());
+        switch (args) {
+            case "edit":
+                if (!builderOnline) {
+                    if (player.isOp()) {
+                        InvOpener.openDelay(player, Inventories.editAMap());
+                    } else {
+                        InvOpener.closeDelay(player);
+                        player.sendMessage(MessageCreator.translate("&7[&bMLG-Rush-Build&7] &cSorry you don't have permissions to edit this map if you think this is a mistake please contact us on Discord"));
+                    }
                 } else {
                     InvOpener.closeDelay(player);
-                    player.sendMessage(MessageCreator.translate("&7[&bMLG-Rush-Build&7] &cSorry you don't have permissions to edit this map if you think this is a mistake please contact us on Discord"));
+                    player.sendMessage(MessageCreator.prefix("MLG-Rush-Build", "&cSorry but there is already a builder online, but you can help him"));
                 }
-            } else {
-                InvOpener.closeDelay(player);
-                player.sendMessage(MessageCreator.prefix("MLG-Rush-Build", "&cSorry but there is already a builder online, but you can help him"));
-            }
-        } else if (args.equals("back")) {
-            InvOpener.openDelay(player, Inventories.chooseBuildMode());
-        } else if (args.equals("quit")) {
-            quitBuildMode(player, false, false);
-        } else if (args.equals("save")) {
-            quitBuildMode(player, true, false);
-        } else if (args.equals("create")) {
-            if (!builderOnline) {
-                InvOpener.closeDelay(player);
-                player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&bMLG-Rush-Build&7] You are going to create a new Map"));
-                player.sendTitle(ChatColor.translateAlternateColorCodes('&', "&6Enterd Build Mode"), "Creating: A Great New Map", 6, 60, 2);
-                createMap(player);
-            } else {
-                InvOpener.closeDelay(player);
-                player.sendMessage(MessageCreator.prefix("MLG-Rush-Build", "&cSorry but there is already a bulder online, but you can help him"));
-            }
-        } else if (args.equals("red")) {
-            if (builderOnline) {
-                if (player == builder) {
+                break;
+            case "back":
+                InvOpener.openDelay(player, Inventories.chooseBuildMode());
+                break;
+            case "quit":
+                quitBuildMode(player, false, false);
+                break;
+            case "save":
+                quitBuildMode(player, true, false);
+                break;
+            case "create":
+                if (!builderOnline) {
                     InvOpener.closeDelay(player);
-                    player.getInventory().setItem(4, StackCreator.createStack(Material.RED_STAINED_GLASS_PANE, "&cTeam Red", Arrays.asList("&7Sets the respawn point", "&7of Team Red"), "", false));
-                }
-            } else {
-                player.sendMessage(ChatColor.RED + "this shouldn't happen your not the Builder");
-            }
-        } else if (args.equals("blue")) {
-            if (builderOnline) {
-                if (player == builder) {
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&bMLG-Rush-Build&7] You are going to create a new Map"));
+                    player.sendTitle(ChatColor.translateAlternateColorCodes('&', "&6Enterd Build Mode"), "Creating: A Great New Map", 6, 60, 2);
+                    createMap(player);
+                } else {
                     InvOpener.closeDelay(player);
-                    player.getInventory().setItem(4, StackCreator.createStack(Material.BLUE_STAINED_GLASS_PANE, "&9Team Blue", Arrays.asList("&7Sets the respawn point", "&7of Team Blue"), "", false));
+                    player.sendMessage(MessageCreator.prefix("MLG-Rush-Build", "&cSorry but there is already a builder online, but you can help him"));
                 }
-            } else {
-                player.sendMessage(ChatColor.RED + "this shouldn't happen your not the Builder");
-            }
+                break;
+            case "red":
+                if (builderOnline) {
+                    if (player == builder) {
+                        InvOpener.closeDelay(player);
+                        player.getInventory().setItem(4, StackCreator.createStack(Material.RED_STAINED_GLASS_PANE, "&cTeam Red", Arrays.asList("&7Sets the respawn point", "&7of Team Red"), "", false));
+                    }
+                } else {
+                    player.sendMessage(ChatColor.RED + "this shouldn't happen your not the Builder");
+                }
+                break;
+            case "blue":
+                if (builderOnline) {
+                    if (player == builder) {
+                        InvOpener.closeDelay(player);
+                        player.getInventory().setItem(4, StackCreator.createStack(Material.BLUE_STAINED_GLASS_PANE, "&9Team Blue", Arrays.asList("&7Sets the respawn point", "&7of Team Blue"), "", false));
+                    }
+                } else {
+                    player.sendMessage(ChatColor.RED + "this shouldn't happen your not the Builder");
+                }
 
-        } else if (args.equals("help")) {
-            if (builderOnline) {
-                if (builder != null) {
-                    helpBuilder(builder, player);
+                break;
+            case "help":
+                if (builderOnline) {
+                    if (builder != null) {
+                        helpBuilder(builder, player);
+                    } else {
+                        player.sendMessage(ChatColor.RED + "Oops Something went wrong hit toqix when this error stays");
+                    }
                 } else {
                     player.sendMessage(ChatColor.RED + "Oops Something went wrong hit toqix when this error stays");
                 }
-            } else {
-                player.sendMessage(ChatColor.RED + "Oops Something went wrong hit toqix when this error stays");
-            }
 
-        } else if (args.equals("delete")) {
+                break;
+            case "delete":
             /*
             deleteMap(false);
             quitBuildMode(player, false, true);
 
              */
-        } else if (args.equals("deleteall")) {
+                break;
+            case "deleteall":
             /*
             deleteMap(true);
             quitBuildMode(player, false, true);
              */
-        } else if (args.equals("lobby")) {
-            editLobby(player);
-        } else if (args.equals("h+")) {
-            setHeight(getHeight() + 1);
-            InvOpener.openDelay(player, Inventories.buildModeWand());
-        } else if (args.equals("h-")) {
-            if (getHeight() > 0) {
-                setHeight(getHeight() - 1);
-            }
-            InvOpener.openDelay(player, Inventories.buildModeWand());
-        } else if (args.equals("r+")) {
-            setRounds(getRounds() + 1);
-            InvOpener.openDelay(player, Inventories.buildModeWand());
-        } else if (args.equals("r-")) {
-            if (getRounds() > 2) {
-                setRounds(getRounds() - 1);
-            }
-            InvOpener.openDelay(player, Inventories.buildModeWand());
+                break;
+            case "lobby":
+                editLobby(player);
+                break;
+            case "h+":
+                setHeight(getHeight() + 1);
+                InvOpener.openDelay(player, Inventories.buildModeWand());
+                break;
+            case "h-":
+                if (getHeight() > 0) {
+                    setHeight(getHeight() - 1);
+                }
+                InvOpener.openDelay(player, Inventories.buildModeWand());
+                break;
+            case "r+":
+                setRounds(getRounds() + 1);
+                InvOpener.openDelay(player, Inventories.buildModeWand());
+                break;
+            case "r-":
+                if (getRounds() > 2) {
+                    setRounds(getRounds() - 1);
+                }
+                InvOpener.openDelay(player, Inventories.buildModeWand());
+                break;
         }
     }
 
     public void editMap(int mapnumber, Player player) {
         map = mapnumber;
         HashMap map = MLGRush.getGameManager().Maps.get(mapnumber);
-        if (map.containsKey("height")) {
-            height = (double) map.get("height");
+        if(map == null || map.get("p1z") == null) {
+            player.sendMessage(MessageCreator.prefix("MLG-Rush-Build", MessageCreator.translate("&cCould not join Map there might be a configuration issue")));
+            player.sendTitle(MessageCreator.translate("&cFailed"), MessageCreator.translate("&cto create Map"), 0, 60, 0);
+        }else {
+            if (map.containsKey("height")) {
+                height = (double) map.get("height");
+            }
+            if (map.containsKey("rounds")) {
+                rounds = (double) map.get("rounds");
+            }
+            player.setGameMode(GameMode.CREATIVE);
+            player.setFlying(true);
+            player.getInventory().clear();
+            playerBuilding.put(player, buildMode.MAIN);
+            player.getInventory().setItem(0, StackCreator.createStack(Material.BLAZE_ROD, "&6Build Wand", Arrays.asList("&7Your Tool to edit the Map"), "", true));
+            double realz = (double) map.get("p1z");
+            MLGRush.resetBlocks(32, 20, (int) realz - 26, (int) realz + 26);
+            player.teleport(new Location(player.getWorld(), 0, (double) map.get("p1y") + 5, (double) map.get("p1z") - 0.5));
+            player.setFlying(true);
         }
-        if (map.containsKey("rounds")) {
-            rounds = (double) map.get("rounds");
-        }
-        player.setGameMode(GameMode.CREATIVE);
-        player.setFlying(true);
-        player.getInventory().clear();
-        playerBuilding.put(player, buildMode.MAIN);
-        player.getInventory().setItem(0, StackCreator.createStack(Material.BLAZE_ROD, "&6Build Wand", Arrays.asList("&7Your Tool to edit the Map"), "", true));
-        double realz = (double) map.get("p1z");
-        MLGRush.resetBlocks(32, 20, (int) realz - 26, (int) realz + 26);
-        player.teleport(new Location(player.getWorld(), 0, (double) map.get("p1y") + 5, (double) map.get("p1z") - 0.5));
-        player.setFlying(true);
     }
 
 
     public void createMap(Player player) {
-        if(!playerBuilding.containsKey(player)) {
-            playerBuilding.put(player, buildMode.MAIN);
-
-            zcord = (int) MLGRush.getGameManager().Maps.get(MLGRush.getGameManager().Maps.size() - 1).get("p1z");
-            zcord -= 60;
-            player.setGameMode(GameMode.CREATIVE);
-            player.getWorld().getBlockAt(0, 100, (int) zcord).setType(Material.DIAMOND_BLOCK);
-            player.teleport(new Location(player.getWorld(), 0, 110, zcord));
-            player.setFlying(true);
-            map = MLGRush.getGameManager().Maps.size();
-            MLGRush.getGameManager().Maps.put(map, new HashMap());
-            MLGRush.getGameManager().Maps.get(map).put("name", "Default Name");
-            MLGRush.getGameManager().Maps.get(map).put("verfügbar", false);
-            MLGRush.getGameManager().Maps.get(map).put("finished", false);
-            MLGRush.getGameManager().Maps.get(map).put("p1z", zcord);
-            MLGRush.getGameManager().Maps.get(map).put("p1x", 0);
-            MLGRush.getGameManager().Maps.get(map).put("p1y", 110);
-            MLGRush.getGameManager().Maps.get(map).put("p2z", zcord);
-            MLGRush.getGameManager().Maps.get(map).put("p2x", 0);
-            MLGRush.getGameManager().Maps.get(map).put("p2y", 110);
-            MLGRush.getGameManager().Maps.get(map).put("author", player.getName());
-            player.getInventory().setItem(0, StackCreator.createStack(Material.BLAZE_ROD, "&6Build Wand", Arrays.asList("&7Your Tool to edit the Map"), "", true));
-            player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&bMLG-Rush-Build&7] &cBefore finishing or leaving please define the Spawns to prevent bugs"));
-        }else {
+        if (!playerBuilding.containsKey(player)) {
+            if (MLGRush.getGameManager().Maps.get(MLGRush.getGameManager().Maps.size() - 1).get("p1z") == null) {
+                player.sendMessage(MessageCreator.prefix("MLG-Rush-Build", "&cFailed to create Map there may be an issue with the last Map"));
+                player.sendTitle(MessageCreator.translate("&cFailed"), MessageCreator.translate("&cto create Map"), 0, 60, 0);
+            } else {
+                zcord = (int) MLGRush.getGameManager().Maps.get(MLGRush.getGameManager().Maps.size() - 1).get("p1z");
+                playerBuilding.put(player, buildMode.MAIN);
+                zcord -= 60;
+                player.setGameMode(GameMode.CREATIVE);
+                player.getWorld().getBlockAt(0, 100, (int) zcord).setType(Material.DIAMOND_BLOCK);
+                player.teleport(new Location(player.getWorld(), 0, 110, zcord));
+                player.setFlying(true);
+                map = MLGRush.getGameManager().Maps.size();
+                MLGRush.getGameManager().Maps.put(map, new HashMap());
+                MLGRush.getGameManager().Maps.get(map).put("name", "Default Name");
+                MLGRush.getGameManager().Maps.get(map).put("verfügbar", false);
+                MLGRush.getGameManager().Maps.get(map).put("finished", false);
+                MLGRush.getGameManager().Maps.get(map).put("p1z", zcord);
+                MLGRush.getGameManager().Maps.get(map).put("p1x", 0);
+                MLGRush.getGameManager().Maps.get(map).put("p1y", 110);
+                MLGRush.getGameManager().Maps.get(map).put("p2z", zcord);
+                MLGRush.getGameManager().Maps.get(map).put("p2x", 0);
+                MLGRush.getGameManager().Maps.get(map).put("p2y", 110);
+                MLGRush.getGameManager().Maps.get(map).put("author", player.getName());
+                player.getInventory().setItem(0, StackCreator.createStack(Material.BLAZE_ROD, "&6Build Wand", Arrays.asList("&7Your Tool to edit the Map"), "", true));
+                player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&bMLG-Rush-Build&7] &cBefore finishing or leaving please define the Spawns to prevent bugs"));
+            }
+        } else {
             player.sendMessage(MessageCreator.prefix("MLG-Rush-Build", "&cYou can't join the Build-Mode twice"));
         }
     }

@@ -117,8 +117,8 @@ public final class gameManager implements Listener {
                         game.saveInstance(game);
                         List<Integer> verfügbareMaps = new ArrayList<>();
 
-                        for (Integer i : Maps.keySet()) {
-                            if ((Boolean) Maps.get(i).get("verfügbar")) {
+                        for (int i : Maps.keySet()) {
+                            if ((boolean) Maps.get(i).get("verfügbar")) {
                                 verfügbareMaps.add(i);
                             }
                         }
@@ -133,8 +133,8 @@ public final class gameManager implements Listener {
                         }
                         Maps.get(map).put("verfügbar", false);
 
-                        Location spawn1 = new Location(player1.getWorld(), (Integer) Maps.get(map).get("p1x"), (Integer) Maps.get(map).get("p1y"), (Integer) Maps.get(map).get("p1z"));
-                        Location spawn2 = new Location(player1.getWorld(), (Integer) Maps.get(map).get("p2x"), (Integer) Maps.get(map).get("p2y"), (Integer) Maps.get(map).get("p2z"));
+                        Location spawn1 = new Location(player1.getWorld(), (double) Maps.get(map).get("p1x"), (double) Maps.get(map).get("p1y"), (double) Maps.get(map).get("p1z"));
+                        Location spawn2 = new Location(player1.getWorld(), (double) Maps.get(map).get("p2x"), (double) Maps.get(map).get("p2y"), (double) Maps.get(map).get("p2z"));
                         player1.closeInventory();
                         player2.closeInventory();
                         MLGRush.getTrainer().playersInBuild.remove(player1);
@@ -146,13 +146,13 @@ public final class gameManager implements Listener {
                         MLGRush.getTrainer().playersTraining.remove(player1);
                         MLGRush.getTrainer().playersTraining.remove(player2);
 
-                        int games = 10;
+                        double games = 10;
                         if (Maps.get(map).containsKey("rounds")) {
-                            games = (Integer) Maps.get(map).get("rounds");
+                            games = (double) Maps.get(map).get("rounds");
                         }
-                        int height = 10;
+                        double height = 10;
                         if (Maps.get(map).containsKey("height")) {
-                            height = (Integer) Maps.get(map).get("height");
+                            height = (double) Maps.get(map).get("height");
                         }
                         if(Maps.get(map).containsKey("author")) {
                             author = (String) Maps.get(map).get("author");

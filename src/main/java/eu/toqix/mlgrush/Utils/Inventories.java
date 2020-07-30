@@ -76,13 +76,13 @@ public class Inventories {
 
     public static Inventory editAMap() {
         // MLGRush.setPage(0);
-        Inventory inv = Bukkit.createInventory(null, 27, "§2Choose a Map to edit");
+        Inventory inv = Bukkit.createInventory(null, 45, "§2Choose a Map to edit");
         for (int n = 0; n < 27; n++) {
             inv.setItem(n, StackCreator.getNothing());
         }
         inv.setItem(0, StackCreator.createStack(Material.BARRIER, "&7Back", Collections.singletonList(""), "b(back)", false));
         inv.setItem(8, StackCreator.createStack(Material.BOOK, "&7All of our great Builders", Arrays.asList("&etoqix", "&edia_block_mcg", "&eqrashi", "&ebetz_bua"), "", false));
-        for (int n = 9; n < 18; n++) {
+        for (int n = 9; n < 36; n++) {
             inv.setItem(n, new ItemStack(Material.AIR));
         }
         for (int i = 0; i < 9; i++) {

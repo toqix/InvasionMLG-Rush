@@ -1,5 +1,6 @@
 package eu.toqix.mlgrush;
 
+import eu.toqix.mlgrush.Utils.CoinManager;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
@@ -18,6 +19,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.sql.BatchUpdateException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -79,9 +81,11 @@ public class gameRunner implements Listener {
                     if (gameHasStarted) {
                         gameTime++;
                         seconds = gameTime;
-                        minutes = seconds/60;
-                        hours = minutes/60;
-                        seconds = seconds - (minutes*60) - (hours*3600);
+                        minutes = seconds / 60;
+                        hours = minutes / 60;
+                        seconds = seconds - (minutes * 60) - (hours * 3600);
+                        minutes = minutes - (hours * 60);
+
                     } else {
                         gameTime = 0;
                     }
@@ -116,11 +120,13 @@ public class gameRunner implements Listener {
                         p1p.setYaw(p1Yaw);
                         p2p.setYaw(p2Yaw);
                         realz = (int) p1.getZ();
-                        gameHasStarted = true;
                         p1.setWorld(player1.getWorld());
                         p2.setWorld(player2.getWorld());
                         pp1 = player1.getName();
                         pp2 = player2.getName();
+                        mapx = (int) Math.abs(p1.getX()) + 25;
+
+                        gameHasStarted = true;
                     }
 
 
@@ -164,8 +170,8 @@ public class gameRunner implements Listener {
 
 
                     if (playersOnMap) {
-                        String pl1color = "&L&7";
-                        String pl2color = "&L&7";
+                        String pl1color;
+                        String pl2color;
                         if (player1score > player2score) {
                             pl1color = "&l&2";
                             pl2color = "&l&4";
@@ -183,18 +189,22 @@ public class gameRunner implements Listener {
                     if (player1score >= games) {
                         player1.sendTitle(ChatColor.GOLD + pp1 + ChatColor.GRAY + " hat Gewonnen", "Invasion Devs, @toqix", 0, 60, 0);
                         player2.sendTitle(ChatColor.GOLD + pp1 + ChatColor.GRAY + " hat Gewonnen", "Invasion Devs, @toqix", 0, 60, 0);
+                        CoinManager.calculateCoins(player1, player1score-player2score, player2, gameTime);
                         endGame(player1, player2);
                     } else if (player2score >= games) {
                         player1.sendTitle(ChatColor.GOLD + pp2 + ChatColor.GRAY + " hat Gewonnen", "Invasion Devs, @toqix", 0, 60, 0);
                         player2.sendTitle(ChatColor.GOLD + pp2 + ChatColor.GRAY + " hat Gewonnen", "Invasion Devs, @toqix", 0, 60, 0);
+                        CoinManager.calculateCoins(player2, player2score-player1score, player1, gameTime);
                         endGame(player2, player1);
                     }
                 } else {
+
                     player1.sendMessage(ChatColor.translateAlternateColorCodes('&', "§7[§bMLG-Rush§7] §cthe Game has end!"));
                     player2.sendMessage(ChatColor.translateAlternateColorCodes('&', "§7[§bMLG-Rush§7] §cthe Game has end!"));
                     MLGRush.getGameManager().Maps.get(map).put("verfügbar", true);
-                    endGame(player1, player2);
-
+                    if (!gamHasEnd) {
+                        endGame(player1, player2);
+                    }
                     cancel();
                 }
             }
@@ -240,12 +250,13 @@ public class gameRunner implements Listener {
         ItemStack blöck = new ItemStack(Material.SANDSTONE, 64);
         ItemMeta blöcke_meta = blöck.getItemMeta();
         blöcke_meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&5Blöcke"));
-        blöcke_meta.setLore(Arrays.asList(ChatColor.translateAlternateColorCodes('&', "&7Mit diesen Item kannst du dich Bauen")));
+        blöcke_meta.setLore(Collections.singletonList(ChatColor.translateAlternateColorCodes('&', "&7Mit diesen Item kannst du dich Bauen")));
         blöck.setItemMeta(blöcke_meta);
         //create the knock back stick
         ItemStack stic = new ItemStack(Material.STICK);
         ItemMeta stick_meta = stic.getItemMeta();
 
+        assert stick_meta != null;
         stick_meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&4KnockBack-Stick"));
         stick_meta.setLore(Arrays.asList(ChatColor.translateAlternateColorCodes('&', "&7Knockback 1"), ChatColor.translateAlternateColorCodes('&', "&7Dieser Stock lässt dich den Gegner weit weck schlagen")));
         stick_meta.getItemFlags().add(ItemFlag.HIDE_ENCHANTS);
@@ -255,6 +266,7 @@ public class gameRunner implements Listener {
         //create the Pickaxt!
         ItemStack pick = new ItemStack(Material.WOODEN_PICKAXE);
         ItemMeta picke_meta = pick.getItemMeta();
+        assert picke_meta != null;
         picke_meta.getItemFlags().add(ItemFlag.HIDE_ENCHANTS);
         picke_meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&4Picke"));
         picke_meta.setLore(Arrays.asList(ChatColor.translateAlternateColorCodes('&', "&7Effizienz 3"), ChatColor.translateAlternateColorCodes('&', "&7Mit diesem Werkzeug kannst du Blöcke zerstören")));
@@ -295,7 +307,7 @@ public class gameRunner implements Listener {
             player2.teleport(s);
             player1.getInventory().clear();
             player2.getInventory().clear();
-            player1.playSound(player1.getLocation(), Sound.ENTITY_WITHER_DEATH, 1, 2);
+            player1.playSound(player1.getLocation(), Sound.ENTITY_WITHER_DEATH, 1, 1);
 
             pp1 = null;
             pp2 = null;
@@ -313,7 +325,7 @@ public class gameRunner implements Listener {
     private void bedDestroyed(Block block, Player player) {
         if (block.getType() == Material.RED_BED) {
             int bedx = block.getX();
-            if (player.getName() == pp1) {
+            if (player.getName().equals(pp1)) {
                 if (p1p.getX() > 0 && bedx > 0) {
                     player.sendMessage(ChatColor.RED + "Du kannst dein eigenes Bett nicht abbauen");
                 } else if (p1p.getX() < 0 && bedx < 0) {
@@ -321,7 +333,7 @@ public class gameRunner implements Listener {
                 } else {
                     bedRespawn(1);
                 }
-            } else if (player.getName() == pp2) {
+            } else if (player.getName().equals(pp2)) {
                 if (p2p.getX() > 0 && bedx > 0) {
                     player.sendMessage(ChatColor.RED + "Du kannst dein eigenes Bett nicht abbauen");
                 } else if (p2p.getX() < 0 && bedx < 0) {
@@ -340,12 +352,12 @@ public class gameRunner implements Listener {
         respawn(p2p, Bukkit.getPlayer(pp2), p2Yaw);
         if (winner == 1) {
             player1score++;
-            Bukkit.getPlayer(pp1).sendMessage(ChatColor.translateAlternateColorCodes('&', "§7[§bMLG-Rush§7] §f" + pp1 + "&e hat das Bett von" + pp2 + "abgebaut"));
-            Bukkit.getPlayer(pp2).sendMessage(ChatColor.translateAlternateColorCodes('&', "§7[§bMLG-Rush§7] §f" + pp1 + "&e hat das Bett von" + pp2 + "abgebaut"));
+            Bukkit.getPlayer(pp1).sendMessage(ChatColor.translateAlternateColorCodes('&', "§7[§bMLG-Rush§7] §f" + pp1 + "&e hat das Bett von &f" + pp2 + " &eabgebaut"));
+            Bukkit.getPlayer(pp2).sendMessage(ChatColor.translateAlternateColorCodes('&', "§7[§bMLG-Rush§7] §f" + pp1 + "&e hat das Bett von &f" + pp2 + " &eabgebaut"));
         } else {
             player2score++;
-            Bukkit.getPlayer(pp1).sendMessage(ChatColor.translateAlternateColorCodes('&', "§7[§bMLG-Rush§7] §f" + pp2 + "&e hat das Bett von" + pp1 + "abgebaut"));
-            Bukkit.getPlayer(pp2).sendMessage(ChatColor.translateAlternateColorCodes('&', "§7[§bMLG-Rush§7] §f" + pp2 + "&e hat das Bett von" + pp1 + "abgebaut"));
+            Bukkit.getPlayer(pp1).sendMessage(ChatColor.translateAlternateColorCodes('&', "§7[§bMLG-Rush§7] §f" + pp2 + "&e hat das Bett von &f" + pp1 + " &eabgebaut"));
+            Bukkit.getPlayer(pp2).sendMessage(ChatColor.translateAlternateColorCodes('&', "§7[§bMLG-Rush§7] §f" + pp2 + "&e hat das Bett von &f" + pp1 + " &eabgebaut"));
         }
         MLGRush.resetBlocks(mapx + 1, (int) (mapy + height + 1), realz - mapz - 1, realz + mapz + 1);
     }
@@ -353,7 +365,7 @@ public class gameRunner implements Listener {
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
-        if(gameTime <= 5) {
+        if (gameTime <= 5) {
             event.setCancelled(true);
         }
         Block block = event.getBlock();
@@ -383,7 +395,7 @@ public class gameRunner implements Listener {
 
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {
-        if(gameTime <= 5) {
+        if (gameTime <= 5) {
             event.setCancelled(true);
         }
         Block block = event.getBlock();

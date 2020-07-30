@@ -15,11 +15,10 @@ public class buildCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         Player player = (Player) sender;
-        if (!MLGRush.getGameManager().queue.containsKey(player)) {
-            if (!MLGRush.getTrainer().playersTraining.contains(player)) {
-                if (MLGRush.getBuildManager().playerBuilding.keySet().size() < 1) {
-                    InvOpener.openDelay(player, Inventories.chooseBuildMode());
-                } else {
+        if (!MLGRush.getBuildManager().playerBuilding.containsKey(player)) {
+            if (!MLGRush.getGameManager().queue.containsKey(player)) {
+                if (!MLGRush.getTrainer().playersTraining.contains(player)) {
+
                     boolean builderOnline = false;
                     for (buildMode mode : MLGRush.getBuildManager().playerBuilding.values()) {
                         if (mode == buildMode.MAIN) {
@@ -33,14 +32,18 @@ public class buildCommand implements CommandExecutor {
                     } else {
                         InvOpener.openDelay(player, Inventories.chooseBuildMode());
                     }
-                }
-            } else {
-                player.sendMessage(MessageCreator.translate("&7[&bMLG-Rush&7] You can't join Build-Mode whilst in Trainer"));
-            }
 
-        } else {
-            player.sendMessage(MessageCreator.translate("&7[&bMLG-Rush-Build&7] &c You can't join Build-Mode whilst in queue"));
+                } else {
+                    player.sendMessage(MessageCreator.translate("&7[&bMLG-Rush&7] You can't join Build-Mode whilst in Trainer"));
+                }
+
+            } else {
+                player.sendMessage(MessageCreator.translate("&7[&bMLG-Rush-Build&7] &c You can't join Build-Mode whilst in queue"));
+            }
+        }else {
+            player.sendMessage(MessageCreator.prefix("MLG-Rush-Build" ,"&cYou already joined the Build-Mode to leave it use &6/leave"));
         }
+
 
         return true;
     }

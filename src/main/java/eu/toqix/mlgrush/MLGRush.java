@@ -3,6 +3,8 @@ package eu.toqix.mlgrush;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import eu.toqix.mlgrush.Listeners.*;
+import eu.toqix.mlgrush.Utils.StatsManager;
+import eu.toqix.mlgrush.Utils.statsType;
 import eu.toqix.mlgrush.commands.*;
 import eu.toqix.mlgrush.trainer.BuildTrainer;
 import org.bukkit.Bukkit;
@@ -42,6 +44,7 @@ public final class MLGRush extends JavaPlugin {
 
 
     private static BuildTrainer trainer;
+    private static StatsManager statsManager;
 
     private static Integer page;
     private BuildTrainer buildTrainer;
@@ -55,6 +58,7 @@ public final class MLGRush extends JavaPlugin {
         manager = new gameManager();
         build = new buildModeManager();
         buildTrainer = new BuildTrainer();
+        statsManager = new StatsManager();
 
         try {
             loadData();
@@ -116,6 +120,9 @@ public final class MLGRush extends JavaPlugin {
     }
     public static buildModeManager getBuildManager() {
         return build;
+    }
+    public static StatsManager getStatsManager() {
+        return statsManager;
     }
 
     public static void resetBlocks(int x, int y, int z1, int z2) {
@@ -188,6 +195,7 @@ public final class MLGRush extends JavaPlugin {
                 playerBlocks.put(str.substring(24), p);
             }
         }
+
         getLogger().info("Loading maps");
         String filepath = this.getDataFolder().getPath() + "/maps.json";
         File file = new File(filepath);
@@ -205,6 +213,24 @@ public final class MLGRush extends JavaPlugin {
         String fileAsString = sb.toString();
         Type type = new TypeToken<HashMap<Integer, HashMap>>(){}.getType();
         manager.Maps = gson.fromJson(fileAsString, type);
+
+        getLogger().info("Loading Stats");
+        String statsFilepath = this.getDataFolder().getPath() + "/stats.json";
+        File statsFile = new File(statsFilepath);
+        InputStream statsIs = new FileInputStream(statsFile);
+        BufferedReader statsBuf = new BufferedReader(new InputStreamReader(statsIs));
+
+        String statsLine = statsBuf.readLine();
+        StringBuilder statsSb = new StringBuilder();
+
+        while(statsLine != null){
+            statsSb.append(statsLine).append("\n");
+            statsLine = statsBuf.readLine();
+        }
+
+        String statsFileAsString = statsSb.toString();
+        Type sType = new TypeToken<HashMap<Player, HashMap<statsType, Integer>>>(){}.getType();
+        statsManager.stats = gson.fromJson(statsFileAsString, sType);
 
 
     }
@@ -230,6 +256,12 @@ public final class MLGRush extends JavaPlugin {
 
         String toSave = gson.toJson(manager.Maps);
         Files.write(Paths.get(file.getAbsolutePath()), toSave.getBytes());
+        
+        String statsPath = this.getDataFolder().getPath() + "/stats.json";
+        File statsFile = new File(statsPath);
+
+        String statsToSave = gson.toJson(statsManager.stats);
+        Files.write(Paths.get(statsFile.getAbsolutePath()), statsToSave.getBytes());
 
         //this.getConfig().set("maps", manager.Maps);
         //this.saveConfig();
