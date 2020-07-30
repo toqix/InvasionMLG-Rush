@@ -326,6 +326,8 @@ public class gameRunner implements Listener {
             MLGRush.getGameManager().leaveQueue(player2);
             statsManager.addStats(player1, statsType.ROUNDS, 1);
             statsManager.addStats(player2, statsType.ROUNDS, 1);
+            statsManager.addStats(player1, statsType.PLAYTIME, gameTime);
+            statsManager.addStats(player2, statsType.PLAYTIME, gameTime);
         }
     }
 

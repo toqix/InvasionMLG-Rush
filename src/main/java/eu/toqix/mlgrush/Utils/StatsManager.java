@@ -3,30 +3,34 @@ package eu.toqix.mlgrush.Utils;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 public class StatsManager {
-    public HashMap<Player, HashMap<statsType, Integer>> stats = new HashMap<>();
+    public HashMap<UUID, HashMap<statsType, Integer>> stats = new HashMap<>();
 
     public void saveStats(Player player, statsType type, int value) {
-        if (!stats.containsKey(player)) {
-            stats.put(player, new HashMap<>());
+        UUID uuid = player.getUniqueId();
+        if (!stats.containsKey(uuid)) {
+            stats.put(uuid, new HashMap<>());
         }
-        stats.get(player).put(type, value);
+        stats.get(uuid).put(type, value);
     }
 
     public void addStats(Player player, statsType type, int value) {
-        if (!stats.containsKey(player)) {
-            stats.put(player, new HashMap<>());
+        UUID uuid = player.getUniqueId();
+        if (!stats.containsKey(uuid)) {
+            stats.put(uuid, new HashMap<>());
         }
-        if (!stats.get(player).containsKey(type)) {
-            stats.get(player).put(type, 0);
+        if (!stats.get(uuid).containsKey(type)) {
+            stats.get(uuid).put(type, 0);
         }
-        stats.get(player).put(type, stats.get(player).get(type) + value);
+        stats.get(uuid).put(type, stats.get(uuid).get(type) + value);
     }
 
     public int getStats(Player player, statsType type) {
-        if(stats.containsKey(player)) {
-            return stats.get(player).getOrDefault(type, 0);
+        UUID uuid = player.getUniqueId();
+        if(stats.containsKey(uuid)) {
+            return stats.get(uuid).getOrDefault(type, 0);
         }else {
             return 0;
         }

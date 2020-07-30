@@ -24,6 +24,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public final class MLGRush extends JavaPlugin {
 
@@ -229,7 +230,7 @@ public final class MLGRush extends JavaPlugin {
         }
 
         String statsFileAsString = statsSb.toString();
-        Type sType = new TypeToken<HashMap<Player, HashMap<statsType, Integer>>>(){}.getType();
+        Type sType = new TypeToken<HashMap<UUID, HashMap<statsType, Integer>>>(){}.getType();
         statsManager.stats = gson.fromJson(statsFileAsString, sType);
 
 
