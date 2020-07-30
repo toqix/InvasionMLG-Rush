@@ -35,4 +35,8 @@ public class StatsManager {
             return 0;
         }
     }
+    public HashMap<statsType, Integer> getAllStats(Player player) {
+        UUID uuid = player.getUniqueId();
+        return stats.getOrDefault(uuid, null);
+    }
 }

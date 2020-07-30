@@ -25,3 +25,5 @@ commands:
   reset:
     description: Reset everything
     permission: MLGrush.reset
+  stats:
+    description: Shows the stats of a Player

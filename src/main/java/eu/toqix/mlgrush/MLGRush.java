@@ -152,6 +152,7 @@ public final class MLGRush extends JavaPlugin {
         getCommand("god").setExecutor(new godCommand());
         getCommand("name").setExecutor(new setName());
         getCommand("reset").setExecutor(new ResetCommand());
+        getCommand("stats").setExecutor(new statsCommand());
     }
 
     private void listenerRegistration() {
